@@ -55,6 +55,7 @@ class Home extends Component {
     return (
       <View style={styles.body}>
         <MapView
+          showsBuildings={false}
           locationEnabled={true}
           zoomLevel={15}
           style={StyleSheet.absoluteFill}
@@ -78,7 +79,7 @@ class Home extends Component {
         </MapView>
         <View style={styles.button}>
           <TouchableHighlight onPress={() => navigate('ReleaseTraOne')} style={styles.btn} activeOpacity={0.7} underlayColor='rgb(53,122,232)'>
-            <Image style={{ width: 16, height: 16,}} source={require('../public/images/plus.png')} />
+            <Image style={{ width: 16, height: 16, }} source={require('../public/images/plus.png')} />
           </TouchableHighlight>
         </View>
       </View>
