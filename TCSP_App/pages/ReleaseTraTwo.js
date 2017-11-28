@@ -5,8 +5,9 @@ import {
   View,
   Dimensions,
 } from 'react-native';
+import OneSearch from './components/OneSearch';
 import { MapView, Marker } from 'react-native-amap3d';
-import { SearchInput } from 'teaset';
+import { SearchInput, Popover, Label, Button } from 'teaset';
 export default class ReleaseTraTwo extends Component {
   constructor(props) {
     super(props);
@@ -16,6 +17,7 @@ export default class ReleaseTraTwo extends Component {
       FormatAdd: '',
       searchText: '',
       searchArray: [],
+      listShow: false,
     }
   }
   static navigationOptions = ({ navigation }) => ({
@@ -24,7 +26,7 @@ export default class ReleaseTraTwo extends Component {
   });
 
   enterPrompt = (text) => {
-    let searchuri = "http://restapi.amap.com/v3/assistant/inputtips?key=a12fe0a773225a0edbb395bce289a441&keywords=" + text + "&location=" + this.state.Longi + "," + this.state.Lati;
+    let searchuri = "http://restapi.amap.com/v3/assistant/inputtips?key=a12fe0a773225a0edbb395bce289a441&datatype=poi&keywords=" + text + "&location=" + this.state.Longi + "," + this.state.Lati;
     fetch(searchuri)
       .then((response) => {
         if (response.ok) {
@@ -35,18 +37,19 @@ export default class ReleaseTraTwo extends Component {
       })
       .then((data) => {
         let searchArray = JSON.parse(JSON.stringify(data)).tips;
-        // alert(JSON.parse(JSON.stringify(searchArray)));
-        // this.setState({searchArray});
+        searchArray = searchArray.slice(0, 3);
+        this.setState({ listShow: true });
         this.setState({ searchArray }, () => {
-          alert(this.state.searchArray);
+          // alert(this.state.searchArray.length);
         });
+
       })
       .catch((err) => {
         console.error(err)
       });
   }
 
-  componentDidMount() {
+  componentWillMount() {
     let startName = JSON.stringify(this.props.navigation.state);
     let start = JSON.parse(startName);
     let geouri = 'http://restapi.amap.com/v3/geocode/geo?key=a12fe0a773225a0edbb395bce289a441&address=' + start.params.start;
@@ -83,7 +86,14 @@ export default class ReleaseTraTwo extends Component {
         console.error(err)
       })
   }
-
+  transferLocation(Lati, Longi, listShow, searchText) {
+    this.setState({
+      Lati,
+      Longi,
+      listShow,
+      searchText
+    });
+  }
   render() {
     const { params } = this.props.navigation.state;
     return (
@@ -92,9 +102,31 @@ export default class ReleaseTraTwo extends Component {
           <SearchInput style={styles.search} placeholder='search address' onChangeText={
             (text) => {
               this.enterPrompt(text);
-              // alert(this.state.searchArray);
+              this.setState({ searchText: text });
             }
-          } />
+          }
+            value={this.state.searchText}
+          />
+          {
+            this.state.listShow ? <View style={styles.searchContext}>
+              {
+                this.state.searchArray.map((oneSearch, index) => {
+                  oneValue = JSON.parse(JSON.stringify(oneSearch)).name;
+                  oneDistrict = JSON.parse(JSON.stringify(oneSearch)).address;
+                  oneLocation = JSON.parse(JSON.stringify(oneSearch)).location;
+                  return (<OneSearch
+                    key={index}
+                    value={oneValue}
+                    district={oneDistrict}
+                    location={oneLocation}
+                    transferLocation={
+                      (Lati, Longi, listShow, searchText) => this.transferLocation(Lati, Longi, listShow, searchText)
+                    }
+                  />);
+                })
+              }
+            </View> : null
+          }
         </View>
         <MapView
           showsBuildings={false}
@@ -111,7 +143,7 @@ export default class ReleaseTraTwo extends Component {
             ({ nativeEvent }) => {
               let point = JSON.parse(JSON.stringify(nativeEvent));
               this.setState({ Lati: parseFloat(point.latitude.toFixed(5)), Longi: parseFloat(point.longitude.toFixed(5)) });
-              let regeouri = 'http://restapi.amap.com/v3/geocode/regeo?key=a12fe0a773225a0edbb395bce289a441&location=' + this.state.Longi + ',' + this.state.Lati;
+              let regeouri = 'http://restapi.amap.com/v3/geocode/regeo?key=a12fe0a773225a0edbb395bce289a441&extensions=all&location=' + this.state.Longi + ',' + this.state.Lati;
               fetch(regeouri)
                 .then((response) => {
                   if (response.ok) {
@@ -122,7 +154,13 @@ export default class ReleaseTraTwo extends Component {
                 })
                 .then((data2) => {
                   let pointArray = JSON.parse(JSON.stringify(data2));
-                  let FormatAdd = pointArray.regeocode.formatted_address;
+                  let FormatAdd = '';
+                  // alert(JSON.stringify(pointArray.regeocode));
+                  if (pointArray.regeocode.aois[0] === undefined) {
+                    FormatAdd = pointArray.regeocode.addressComponent.city + pointArray.regeocode.addressComponent.district + pointArray.regeocode.addressComponent.township + pointArray.regeocode.addressComponent.streetNumber.number;
+                  } else {
+                    FormatAdd = pointArray.regeocode.aois[0].name;
+                  }
                   this.setState({ FormatAdd });
                 })
                 .catch((err) => {
@@ -139,11 +177,18 @@ export default class ReleaseTraTwo extends Component {
               latitude: this.state.Lati,
               longitude: this.state.Longi,
             }}>
-            <View style={styles.customInfoWindow}>
+            {/* <View style={styles.customInfoWindow}>
               <Text>{this.state.FormatAdd}</Text>
+            </View> */}
+            <View>
+              <View style={styles.customInfoWindow}>
+                <Text style={{ textAlign: 'center', }}>{this.state.FormatAdd}</Text>
+              </View>
+              {/* <Label text={this.state.FormatAdd} /> */}
             </View>
           </Marker>
         </MapView>
+        <Button></Button>
       </View>
     );
   }
@@ -155,7 +200,17 @@ const styles = StyleSheet.create({
   },
   customInfoWindow: {
     width: 150,
-    height: 50
+    height: 60,
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: 'rgba(51,51,51,0.2)',
+    borderRadius: 2,
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    shadowColor: 'rgba(0,0,0,0.3)',
+    shadowOffset: { h: 10, w: 10 },
+    justifyContent: 'center'
   },
   searchs: {
     zIndex: 9999,
