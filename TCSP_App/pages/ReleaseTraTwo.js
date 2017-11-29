@@ -4,10 +4,12 @@ import {
   Text,
   View,
   Dimensions,
+  TouchableOpacity
 } from 'react-native';
 import OneSearch from './components/OneSearch';
 import { MapView, Marker } from 'react-native-amap3d';
-import { SearchInput, Popover, Label, Button } from 'teaset';
+import { SearchInput, Button } from 'teaset';
+import ButtonComponent, { CircleButton, RoundButton, RectangleButton } from 'react-native-button-component';
 export default class ReleaseTraTwo extends Component {
   constructor(props) {
     super(props);
@@ -18,11 +20,18 @@ export default class ReleaseTraTwo extends Component {
       searchText: '',
       searchArray: [],
       listShow: false,
+      pointNum: 0
     }
   }
   static navigationOptions = ({ navigation }) => ({
     title: `${navigation.state.params.start}`,
-    elevation: 0
+    headerRight: <TouchableOpacity style={styles.menubtn}>
+      <View>
+        <Text style={{ color: '#000' }}>已选{navigation.state.params.pointNum}点</Text>
+      </View>
+    </TouchableOpacity>,
+    headerStyle: { elevation: 0 },
+
   });
 
   enterPrompt = (text) => {
@@ -48,7 +57,11 @@ export default class ReleaseTraTwo extends Component {
         console.error(err)
       });
   }
-
+  componentDidMount() {
+    this.props.navigation.setParams({
+      pointNum: this.state.pointNum
+    })
+  }
   componentWillMount() {
     let startName = JSON.stringify(this.props.navigation.state);
     let start = JSON.parse(startName);
@@ -188,7 +201,21 @@ export default class ReleaseTraTwo extends Component {
             </View>
           </Marker>
         </MapView>
-        <Button></Button>
+        <ButtonComponent
+          onPress={() => {
+            let pointNum = this.state.pointNum + 1; 
+            this.setState({ pointNum }, () => {
+              this.props.navigation.setParams({
+                pointNum: this.state.pointNum
+              });
+            });
+          }}
+          backgroundColors={['#4DC7A4', '#66D37A']}
+          text="添加该点"
+          style={styles.addbtn}
+        >
+        </ButtonComponent>
+
       </View>
     );
   }
@@ -222,5 +249,21 @@ const styles = StyleSheet.create({
     width: 300,
     height: 40,
     marginTop: 5
+  },
+  addbtn: {
+    width: 120,
+    position: 'absolute',
+    bottom: 20,
+    left: Dimensions.get('window').width / 2 - 60,
+  },
+  menubtn: {
+    width: 50,
+    height: 30,
+    zIndex: 9999,
+    // position: 'absolute',
+    // bottom: 10,
+    // right: 0,
+    borderRadius: 0,
+    backgroundColor: '#FFFFFF'
   }
 });

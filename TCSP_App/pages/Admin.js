@@ -19,21 +19,21 @@ export default class Admin extends Component {
     return (
       <TabView style={{ flex: 1 }} type='projector'>
         <TabView.Sheet
-          title='Home'
+          title='首页'
           icon={require('../public/images/home.png')}
           activeIcon={require('../public/images/home_active.png')}
         >
           <Home />
         </TabView.Sheet>
         <TabView.Sheet
-          title='Home'
+          title='发现'
           icon={require('../public/images/chart.png')}
           activeIcon={require('../public/images/chart_active.png')}
         >
           <Login />
         </TabView.Sheet>
         <TabView.Sheet
-          title='Me'
+          title='我的'
           icon={require('../public/images/me.png')}
           activeIcon={require('../public/images/me_active.png')}
           badge={1}

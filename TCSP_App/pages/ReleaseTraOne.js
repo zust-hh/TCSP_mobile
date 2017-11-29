@@ -17,7 +17,7 @@ export default class ReleaseTraOne extends Component {
   }
   static navigationOptions = {
     title: '发布行程',    //设置navigator的title
-    elevation: 0
+    headerStyle: {elevation: 0},
   }
   render() {
     const { navigate } = this.props.navigation;
