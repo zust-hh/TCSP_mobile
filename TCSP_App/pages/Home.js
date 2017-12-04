@@ -11,6 +11,7 @@ import { MapView, HeatMap, Marker } from 'react-native-amap3d';
 import { StackNavigator } from 'react-navigation';
 import ReleaseTraOne from './ReleaseTraOne';
 import ReleaseTraTwo from './ReleaseTraTwo';
+import TravelList from './TravelList';
 class Home extends Component {
   constructor(props) {
     super(props);
@@ -91,6 +92,8 @@ export default SimpleApp = StackNavigator({
   Home: { screen: Home },
   ReleaseTraOne: { screen: ReleaseTraOne },
   ReleaseTraTwo: { screen: ReleaseTraTwo },
+  TravelList: { screen: TravelList },
+
 });
 
 const styles = StyleSheet.create({

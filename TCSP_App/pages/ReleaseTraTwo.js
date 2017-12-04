@@ -4,12 +4,14 @@ import {
   Text,
   View,
   Dimensions,
-  TouchableOpacity
+  TouchableOpacity,
+  Image
 } from 'react-native';
 import OneSearch from './components/OneSearch';
+import OnePoint from './components/OnePoint';
 import { MapView, Marker } from 'react-native-amap3d';
-import { SearchInput, Button } from 'teaset';
-import ButtonComponent, { CircleButton, RoundButton, RectangleButton } from 'react-native-button-component';
+import { SearchInput, Button, Badge, Theme, Label, Drawer, ListRow } from 'teaset';
+import ButtonComponent from 'react-native-button-component';
 export default class ReleaseTraTwo extends Component {
   constructor(props) {
     super(props);
@@ -17,51 +19,40 @@ export default class ReleaseTraTwo extends Component {
       Lati: 39.91095,
       Longi: 116.37296,
       FormatAdd: '',
+      FormatCity: '',
       searchText: '',
       searchArray: [],
       listShow: false,
-      pointNum: 0
+      pointNum: 0,
+      pointList: []
     }
   }
+  //传递给子搜索的函数
+  transferLocation(Lati, Longi, listShow, searchText) {
+    this.setState({
+      Lati,
+      Longi,
+      listShow,
+      searchText
+    });
+  }
+  //navigation设置
   static navigationOptions = ({ navigation }) => ({
     title: `${navigation.state.params.start}`,
-    headerRight: <TouchableOpacity style={styles.menubtn}>
-      <View>
-        <Text style={{ color: '#000' }}>已选{navigation.state.params.pointNum}点</Text>
-      </View>
+    headerRight: <TouchableOpacity style={styles.menubtn} onPress={navigation.state.params.navigatePress}>
+      <Image source={require('../public/images/menu.png')} />
+      <Badge type='capsule' count={navigation.state.params.pointNum} />
     </TouchableOpacity>,
     headerStyle: { elevation: 0 },
-
   });
-
-  enterPrompt = (text) => {
-    let searchuri = "http://restapi.amap.com/v3/assistant/inputtips?key=a12fe0a773225a0edbb395bce289a441&datatype=poi&keywords=" + text + "&location=" + this.state.Longi + "," + this.state.Lati;
-    fetch(searchuri)
-      .then((response) => {
-        if (response.ok) {
-          return response.json()
-        } else {
-          console.error('服务器繁忙，请稍后再试；\r\nCode:' + response.status)
-        }
-      })
-      .then((data) => {
-        let searchArray = JSON.parse(JSON.stringify(data)).tips;
-        searchArray = searchArray.slice(0, 3);
-        this.setState({ listShow: true });
-        this.setState({ searchArray }, () => {
-          // alert(this.state.searchArray.length);
-        });
-
-      })
-      .catch((err) => {
-        console.error(err)
-      });
-  }
+  //首次加载
   componentDidMount() {
     this.props.navigation.setParams({
-      pointNum: this.state.pointNum
+      pointNum: this.state.pointNum,
+      navigatePress: this.navigatePress
     })
   }
+  //首次加载之前
   componentWillMount() {
     let startName = JSON.stringify(this.props.navigation.state);
     let start = JSON.parse(startName);
@@ -99,15 +90,75 @@ export default class ReleaseTraTwo extends Component {
         console.error(err)
       })
   }
-  transferLocation(Lati, Longi, listShow, searchText) {
-    this.setState({
-      Lati,
-      Longi,
-      listShow,
-      searchText
-    });
+  //右上角菜单点击事件
+  navigatePress = () => {
+    Drawer.open(this.pointListView(), 'right')
+  }
+  //输入提示
+  enterPrompt = (text) => {
+    let searchuri = "http://restapi.amap.com/v3/assistant/inputtips?key=a12fe0a773225a0edbb395bce289a441&datatype=poi&keywords=" + text + "&location=" + this.state.Longi + "," + this.state.Lati;
+    fetch(searchuri)
+      .then((response) => {
+        if (response.ok) {
+          return response.json()
+        } else {
+          console.error('服务器繁忙，请稍后再试；\r\nCode:' + response.status)
+        }
+      })
+      .then((data) => {
+        let searchArray = JSON.parse(JSON.stringify(data)).tips;
+        searchArray = searchArray.slice(0, 3);
+        this.setState({ listShow: true });
+        this.setState({ searchArray }, () => {
+          // alert(this.state.searchArray.length);
+        });
+
+      })
+      .catch((err) => {
+        console.error(err)
+      });
+  }
+  endEdit() {
+    this.props.navigation.navigate('TravelList',{state:1})
+  }
+  //右侧弹出抽屉View
+  pointListView() {
+    return (
+      <View style={{ backgroundColor: Theme.defaultColor, height: 260 }}>
+        {
+          this.state.pointNum === 0 ? <View style={styles.drawerContainer}><Text>您还没有添加路径点</Text></View>
+            : <View style={styles.drawerContainer}><ListRow
+              title={'您已添加' + this.state.pointNum + '个路径点'}
+            // swipeActions={[
+            //   <ListRow.SwipeActionButton title='Cancel' />,
+            //   <ListRow.SwipeActionButton title='Remove' type='danger' onPress={() => alert('Remove')} />,
+            // ]}
+            />
+              {
+                this.state.pointList.map((onePoint, index) => {
+                  onePointNum = JSON.parse(JSON.stringify(onePoint)).pointNum;
+                  onePointName = JSON.parse(JSON.stringify(onePoint)).pointName;
+                  onePointCity = JSON.parse(JSON.stringify(onePoint)).pointCity;
+                  onePointLongi = JSON.parse(JSON.stringify(onePoint)).pointLongi;
+                  onePointLati = JSON.parse(JSON.stringify(onePoint)).pointLati;
+                  return (<OnePoint
+                    key={index}
+                    num={onePointNum}
+                    name={onePointName}
+                    city={onePointCity}
+                  />);
+                })
+              }
+            </View>
+        }
+        {/* <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+          <Label type='detail' size='xl' text='Drawer' />
+        </View> */}
+      </View>
+    )
   }
   render() {
+    // let drawer = Drawer.show(pointList, 'right');
     const { params } = this.props.navigation.state;
     return (
       <View style={styles.note}>
@@ -168,6 +219,7 @@ export default class ReleaseTraTwo extends Component {
                 .then((data2) => {
                   let pointArray = JSON.parse(JSON.stringify(data2));
                   let FormatAdd = '';
+                  let FormatCity = '';
                   // alert(JSON.stringify(pointArray.regeocode));
                   if (pointArray.regeocode.aois[0] === undefined) {
                     FormatAdd = pointArray.regeocode.addressComponent.city + pointArray.regeocode.addressComponent.district + pointArray.regeocode.addressComponent.township + pointArray.regeocode.addressComponent.streetNumber.number;
@@ -175,6 +227,12 @@ export default class ReleaseTraTwo extends Component {
                     FormatAdd = pointArray.regeocode.aois[0].name;
                   }
                   this.setState({ FormatAdd });
+                  if (pointArray.regeocode.addressComponent.city == '') {
+                    FormatCity = pointArray.regeocode.addressComponent.province;
+                  } else {
+                    FormatCity = pointArray.regeocode.addressComponent.city;
+                  }
+                  this.setState({ FormatCity });
                 })
                 .catch((err) => {
                   console.error(err)
@@ -203,19 +261,31 @@ export default class ReleaseTraTwo extends Component {
         </MapView>
         <ButtonComponent
           onPress={() => {
-            let pointNum = this.state.pointNum + 1; 
+            let pointNum = this.state.pointNum + 1;
             this.setState({ pointNum }, () => {
               this.props.navigation.setParams({
                 pointNum: this.state.pointNum
               });
             });
+            let onePointInfo = {
+              "pointNum": this.state.pointNum + 1,
+              "pointName": this.state.FormatAdd,
+              "pointCity": this.state.FormatCity,
+              "pointLongi": this.state.Longi,
+              "pointLati": this.state.Lati
+            }
+            let pointList = this.state.pointList;
+            pointList.push(onePointInfo);
+            this.setState(pointList);
           }}
           backgroundColors={['#4DC7A4', '#66D37A']}
           text="添加该点"
           style={styles.addbtn}
         >
         </ButtonComponent>
-
+        <TouchableOpacity style={styles.next} onPress = {this.endEdit.bind(this)}>
+          <Image style={{ width: 40, height: 40}} source={require('../public/images/next.png')} />
+        </TouchableOpacity>
       </View>
     );
   }
@@ -224,6 +294,14 @@ export default class ReleaseTraTwo extends Component {
 const styles = StyleSheet.create({
   note: {
     flex: 1,
+  },
+  next: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+
   },
   customInfoWindow: {
     width: 150,
@@ -257,13 +335,13 @@ const styles = StyleSheet.create({
     left: Dimensions.get('window').width / 2 - 60,
   },
   menubtn: {
-    width: 50,
-    height: 30,
+    justifyContent: 'center',
     zIndex: 9999,
-    // position: 'absolute',
-    // bottom: 10,
-    // right: 0,
+    flexDirection: 'row',
     borderRadius: 0,
     backgroundColor: '#FFFFFF'
+  },
+  drawerContainer: {
+    width: 160,
   }
 });

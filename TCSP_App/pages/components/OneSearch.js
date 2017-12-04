@@ -8,7 +8,6 @@ import {
   Image,
 } from 'react-native';
 export default class OneSearch extends Component {
-
   render() {
     return (
       <TouchableOpacity style={styles.onesearch} key={this.props.keyval} onPress = {
