@@ -7,3 +7,5 @@ native-navigation =》 react-native-router-flux
 teaset =》 nativebase
 
 可拖拽的pointList =》 react-native-sortable-listview
+
+添加确认提示
