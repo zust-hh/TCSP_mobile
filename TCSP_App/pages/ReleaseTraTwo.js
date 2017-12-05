@@ -119,7 +119,7 @@ export default class ReleaseTraTwo extends Component {
       });
   }
   endEdit() {
-    this.props.navigation.navigate('TravelList',{state:1})
+    this.props.navigation.navigate('TravelList',{state:1,pointList:this.state.pointList});
   }
   //右侧弹出抽屉View
   pointListView() {
