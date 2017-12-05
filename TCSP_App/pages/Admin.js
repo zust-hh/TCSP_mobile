@@ -7,7 +7,7 @@ import {
   ScrollView,
 } from 'react-native';
 import {Button,TabView} from 'teaset';
-import Login from './Login';
+import Find from './FindHome';
 import Rigist from './Regist';
 import Home from './Home';
 export default class Admin extends Component {
@@ -30,7 +30,7 @@ export default class Admin extends Component {
           icon={require('../public/images/chart.png')}
           activeIcon={require('../public/images/chart_active.png')}
         >
-          <Login />
+          <Find />
         </TabView.Sheet>
         <TabView.Sheet
           title='我的'
