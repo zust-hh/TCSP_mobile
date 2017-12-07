@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import {Button,TabView} from 'teaset';
 import Find from './FindHome';
-import Rigist from './Regist';
+import User from './UserHome';
 import Home from './Home';
 export default class Admin extends Component {
   static navigationOptions = {
@@ -38,7 +38,7 @@ export default class Admin extends Component {
           activeIcon={require('../public/images/me_active.png')}
           badge={1}
         >
-          <Rigist />
+          <User />
         </TabView.Sheet>
       </TabView>
     );

@@ -120,6 +120,7 @@ const styles = StyleSheet.create({
   onetravel: {
     marginBottom: 10,
     position: 'relative',
+    elevation: 2,
   },
   oneinfo: {
     padding: 10,
@@ -131,6 +132,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.5)',
     borderBottomLeftRadius: 5,
     borderBottomRightRadius: 5,
+    elevation:2
   },
   oneuser: {
     backgroundColor: '#FFFFFF',
