@@ -22,18 +22,24 @@ export default class TravelMain extends Component {
     this.state = {
       pointList: [{
         pointNum: 1,
-        pointName: '上海的奇妙之旅',
+        pointName: '上海的奇妙之旅1',
         pointCity: '上海市',
+        pointLongi:116.980724,
+        pointLati:39.989584,
       },
       {
         pointNum: 2,
-        pointName: '上海的奇妙之旅',
+        pointName: '上海的奇妙之旅2',
         pointCity: '上海市',
+        pointLongi:115.480724,
+        pointLati:39.989584,
       },
       {
         pointNum: 3,
-        pointName: '上海的奇妙之旅',
+        pointName: '上海的奇妙之旅3',
         pointCity: '上海市',
+        pointLongi:116.080724,
+        pointLati:39.989584,
       }],
       dataSource: new ListView.DataSource({
         rowHasChanged: (row1, row2) => row1 !== row2,
@@ -46,10 +52,15 @@ export default class TravelMain extends Component {
     headerStyle: { elevation: 0, backgroundColor: 'rgb(65, 192, 115)' },
     headerBackTitleStyle: { color: '#FFFFFF' },
     headerTintColor: '#fff',
-    headerRight: <TouchableOpacity style={styles.menubtn} onPress={()=>{}}>
+    headerRight: <TouchableOpacity style={styles.menubtn} onPress={()=>navigation.navigate('TravelMap',{pointList:navigation.state.params.pointList})}>
     <Image source={require('../public/images/map.png')} style={{width:27,height:27}}/>
   </TouchableOpacity>,
   });
+  componentDidMount() {
+    this.props.navigation.setParams({
+      pointList: this.state.pointList
+    })
+  }
   //进行渲染数据
   renderContent(dataSource) {
     return (
@@ -171,6 +182,7 @@ export default class TravelMain extends Component {
   //   this.setState({ pointList });
   // }
   render() {
+    const { navigate } = this.props.navigation;
     return (
       <View style={{ flex: 1 }}>
         <View style={styles.travelhead}>

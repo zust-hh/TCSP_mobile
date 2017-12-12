@@ -5,8 +5,7 @@ import {
   Text,
   View,
   ScrollView,
-  Button,
-  Linking
+  Button
 } from 'react-native';
 import { StackNavigator } from 'react-navigation';
 import Home from './Home';
@@ -15,30 +14,17 @@ import Login from './Login';
 import List from './TestList';
 import Admin from './Admin';
 import TravelMain from './TravelMain';
+import TravelMap from './TravelMap';
 class LaunchImage extends Component {
   static navigationOptions = {
     title: 'Launch',    //设置navigator的title
-  }
-  constructor(props) {
-    super(props);
-    this.state = {
-      url: 'androidamap://route?sid=BGVIS1&slat=39.98871&slon=116.43234&sname=对外经贸大学&did=BGVIS2&dlat=40.055878&dlon=116.307854&dname=北京&dev=0&m=0&t=2',
-    }
   }
   render() {
     const { navigate } = this.props.navigation;
     return (
       <View>
         <Button
-          onPress={() => {
-            Linking.canOpenURL(this.state.url).then(supported => {
-              if (supported) {
-                Linking.openURL(this.state.url);
-              } else {
-                console.log('无法打开该URI: ' + this.props.url);
-              }
-            })
-          }}
+          onPress={ () => navigate('TravelMain')}
           title="Chat with Lucy"
         />
       </View>
@@ -53,4 +39,5 @@ export default SimpleApp = StackNavigator({
   List: { screen: List },
   Admin: { screen: Admin },
   TravelMain: { screen: TravelMain },
+  TravelMap: { screen: TravelMap },
 });
