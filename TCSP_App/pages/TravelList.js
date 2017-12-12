@@ -8,6 +8,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   ListView,
+  ImageBackground,
+  Button
 } from 'react-native';
 import forge from 'node-forge';
 import ButtonComponent from 'react-native-button-component';
@@ -61,10 +63,10 @@ class TravelList extends Component {
         </View>
         <View >
           <View style={{ height: 5 }} />
-          <Image source={require('../public/images/ic_order_status_item_bg.png')}
+          <ImageBackground source={require('../public/images/ic_order_status_item_bg.png')}
             style={{ height: 65, marginLeft: 10, width: (width - 60) }}>
             {this.renderCenterContent(this.state.pointList[0])}
-          </Image>
+          </ImageBackground>
           <View style={{ height: 5 }} />
         </View>
       </View>
@@ -80,10 +82,10 @@ class TravelList extends Component {
         </View>
         <View >
           <View style={{ height: 5 }} />
-          <Image source={require('../public/images/ic_order_status_item_bg.png')}
+          <ImageBackground source={require('../public/images/ic_order_status_item_bg.png')}
             style={{ height: 65, marginLeft: 10, width: (width - 60) }}>
             {this.renderCenterContent(data)}
-          </Image>
+          </ImageBackground>
           <View style={{ height: 5 }} />
         </View>
       </View>
@@ -99,10 +101,10 @@ class TravelList extends Component {
           </View>
           <View >
             <View style={{ height: 5 }} />
-            <Image source={require('../public/images/ic_order_status_item_bg.png')}
+            <ImageBackground source={require('../public/images/ic_order_status_item_bg.png')}
               style={{ height: 65, marginLeft: 10, width: (width - 60) }}>
               {this.renderCenterContent(this.state.pointList[this.state.pointList.length - 1])}
-            </Image>
+            </ImageBackground>
             <View style={{ height: 5 }} />
           </View>
         </View>
@@ -161,20 +163,20 @@ class TravelList extends Component {
           {this.renderContent(this.state.dataSource.cloneWithRows(
             this.state.pointList.slice(1, this.state.pointList.length - 1) === undefined ? [] : this.state.pointList.slice(1, this.state.pointList.length - 1)))}
         </View>
-        <ButtonComponent
+        <Button
           onPress={() => this.props.navigation.goBack()}
-          backgroundColors={['#6A6AD5', '#6F86D9']}
-          text="返回编辑"
+          // backgroundColors={['#6A6AD5', '#6F86D9']}
+          title="返回编辑"
           style={styles.goback}
         >
-        </ButtonComponent>
-        <ButtonComponent
+        </Button>
+        <Button
           onPress={() => {this.props.navigation.navigate('Home')}}
-          backgroundColors={['#4DC7A4', '#66D37A']}
-          text="完成创建"
+          // backgroundColors={['#4DC7A4', '#66D37A']}
+          title="完成创建"
           style={styles.complete}
         >
-        </ButtonComponent>
+        </Button>
       </View>
     );
   }

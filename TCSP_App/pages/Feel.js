@@ -10,7 +10,6 @@ import {
   Dimensions,
 } from 'react-native';
 import { Rating, AirbnbRating } from 'react-native-ratings';
-import { Input } from 'teaset';
 var width = Dimensions.get('window').width;
 export default class Feel extends Component {
   static navigationOptions = ({ navigation }) => ({
@@ -26,11 +25,14 @@ export default class Feel extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Input
+        <TextInput
           style={styles.input}
-          onChangeText={text => this.setState({ valueCustom: text })}
+          // onChangeText={text => this.setState({ valueCustom: text })}
           placeholder="把你的感想分享一下吧"
           placeholderTextColor='rgb(200,200,200)'
+          autoFocus={true}
+          multiline={true}
+          underlineColorAndroid={'transparent'}
         />
       </View>
     );
@@ -48,8 +50,8 @@ const styles = StyleSheet.create({
     width: 200,
     backgroundColor: 'white',
     color: 'black',
-    borderColor: '#fff',
     fontSize: 16,
+    width: width-20,
   },
 })
 

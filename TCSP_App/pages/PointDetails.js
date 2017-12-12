@@ -11,7 +11,9 @@ import {
   ScrollView,
 } from 'react-native';
 import { StackNavigator } from 'react-navigation';
+import { Button } from 'teaset';
 import Comment from './Comment';
+import Feel from "./Feel";
 var width = Dimensions.get('window').width;
 class PointDetails extends Component {
   static navigationOptions = {
@@ -56,7 +58,7 @@ class PointDetails extends Component {
           <View style={styles.feelhead}>
             <Image source={require('../public/images/feelicon.png')} style={styles.feelheadicon} />
             <Text style={{ fontWeight: 'bold' }}>游记分享</Text>
-
+            <Button type='danger' title='修改感想' onPress={() => navigate('Feel')} style={{position:'absolute',height:20,right:10}}/>
           </View>
           <View style={styles.feelcontent}>
             <Text>       {this.state.onePoint.feel}</Text>
@@ -76,16 +78,16 @@ class PointDetails extends Component {
           </View>
           <View style={styles.commentlist}>
             <View style={styles.onecomment}>
-              <Image source={require('../public/images/boy.png')} style={{width:40,height:40}}/>
+              <Image source={require('../public/images/boy.png')} style={{ width: 40, height: 40 }} />
               <View style={styles.onecommentright}>
                 <View style={styles.onecommentrighthead}>
-                  <Text style={{fontWeight:'bold',fontSize:16}}>Zust_lxz</Text>
-                  <View style={{position:'absolute',right:0,width:40,height:20,backgroundColor:'rgb(238,238,238)',alignItems:'center',justifyContent:'center'}}>
-                    <Text style={{fontSize:12,color:'rgb(65,192,116)'}}>很一般</Text>
+                  <Text style={{ fontWeight: 'bold', fontSize: 16 }}>Zust_lxz</Text>
+                  <View style={{ position: 'absolute', right: 0, width: 40, height: 20, backgroundColor: 'rgb(238,238,238)', alignItems: 'center', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 12, color: 'rgb(65,192,116)' }}>很一般</Text>
                   </View>
                 </View>
                 <View>
-                  <Text style={{color:'rgb(125,125,125)'}}>这里真是个好地方！！！</Text>
+                  <Text style={{ color: 'rgb(125,125,125)' }}>这里真是个好地方！！！</Text>
                 </View>
               </View>
             </View>
@@ -158,7 +160,7 @@ const styles = StyleSheet.create({
   onecomment: {
     flexDirection: 'row',
     marginBottom: 15,
-    borderBottomWidth:1,
+    borderBottomWidth: 1,
     borderColor: '#eee',
     paddingBottom: 5
   },
@@ -167,13 +169,14 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   onecommentrighthead: {
-    width: width-100,
+    width: width - 100,
     flexDirection: 'row',
     marginBottom: 5
   }
 });
 
 export default SimpleApp = StackNavigator({
-  PointDetails: { screen: PointDetails },
+  LaunchImage: { screen: LaunchImage },
   Comment: { screen: Comment },
+  Feel: { screen: Feel },
 });

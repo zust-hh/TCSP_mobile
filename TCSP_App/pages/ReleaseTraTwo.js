@@ -259,7 +259,7 @@ export default class ReleaseTraTwo extends Component {
             </View>
           </Marker>
         </MapView>
-        <ButtonComponent
+        <Button
           onPress={() => {
             let pointNum = this.state.pointNum + 1;
             this.setState({ pointNum }, () => {
@@ -278,11 +278,10 @@ export default class ReleaseTraTwo extends Component {
             pointList.push(onePointInfo);
             this.setState(pointList);
           }}
-          backgroundColors={['#4DC7A4', '#66D37A']}
-          text="添加该点"
+          title="添加该点"
           style={styles.addbtn}
         >
-        </ButtonComponent>
+        </Button>
         <TouchableOpacity style={styles.next} onPress = {this.endEdit.bind(this)}>
           <Image style={{ width: 40, height: 40}} source={require('../public/images/next.png')} />
         </TouchableOpacity>

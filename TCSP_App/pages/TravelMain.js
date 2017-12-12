@@ -8,6 +8,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   ListView,
+  ImageBackground,
 } from 'react-native';
 import forge from 'node-forge';
 import ButtonComponent from 'react-native-button-component';
@@ -40,9 +41,15 @@ export default class TravelMain extends Component {
       pointEn: []
     }
   }
-  static navigationOptions = {
-    header: false,
-  }
+  static navigationOptions = ({ navigation }) => ({
+    headerTitle: '第一次旅行',
+    headerStyle: { elevation: 0, backgroundColor: 'rgb(65, 192, 115)' },
+    headerBackTitleStyle: { color: '#FFFFFF' },
+    headerTintColor: '#fff',
+    headerRight: <TouchableOpacity style={styles.menubtn} onPress={()=>{}}>
+    <Image source={require('../public/images/map.png')} style={{width:27,height:27}}/>
+  </TouchableOpacity>,
+  });
   //进行渲染数据
   renderContent(dataSource) {
     return (
@@ -74,10 +81,10 @@ export default class TravelMain extends Component {
         </View>
         <View >
           <View style={{ height: 5 }} />
-          <Image source={require('../public/images/ic_order_status_item_bg.png')}
+          <ImageBackground source={require('../public/images/ic_order_status_item_bg.png')}
             style={{ height: 65, marginLeft: 10, width: (width - 60) }}>
             {this.renderCenterContent(this.state.pointList[0])}
-          </Image>
+          </ImageBackground>
           <View style={{ height: 5 }} />
         </View>
       </View>
@@ -93,10 +100,10 @@ export default class TravelMain extends Component {
         </View>
         <View >
           <View style={{ height: 5 }} />
-          <Image source={require('../public/images/ic_order_status_item_bg.png')}
+          <ImageBackground source={require('../public/images/ic_order_status_item_bg.png')}
             style={{ height: 65, marginLeft: 10, width: (width - 60) }}>
             {this.renderCenterContent(data)}
-          </Image>
+          </ImageBackground>
           <View style={{ height: 5 }} />
         </View>
       </View>
@@ -112,10 +119,10 @@ export default class TravelMain extends Component {
           </View>
           <View >
             <View style={{ height: 5 }} />
-            <Image source={require('../public/images/ic_order_status_item_bg.png')}
+            <ImageBackground source={require('../public/images/ic_order_status_item_bg.png')}
               style={{ height: 65, marginLeft: 10, width: (width - 60) }}>
               {this.renderCenterContent(this.state.pointList[this.state.pointList.length - 1])}
-            </Image>
+            </ImageBackground>
             <View style={{ height: 5 }} />
           </View>
         </View>
@@ -167,8 +174,7 @@ export default class TravelMain extends Component {
     return (
       <View style={{ flex: 1 }}>
         <View style={styles.travelhead}>
-          <Text style={{ fontSize: 30, color: '#fff', marginTop: 30, marginLeft: 25 }}>第一次旅行</Text>
-
+          <Image source={require('../public/images/image2.jpg')} style={{width:width,height:160}}/>
         </View>
         <View style={{ flex: 1, backgroundColor: '#f5f5f5', paddingTop: 20 }}>
           {this.renderContent(this.state.dataSource.cloneWithRows(
@@ -179,17 +185,14 @@ export default class TravelMain extends Component {
   }
 }
 const styles = StyleSheet.create({
+  menubtn: {
+    marginRight: 10,
+    zIndex: 9999,
+    borderRadius: 0,
+  },
   travelhead: {
     width: width,
     height: 160,
-    backgroundColor: 'rgba(24,150,136,0.8)',
-  },
-  goback: {
-    width: 100,
-    position: 'absolute',
-    bottom: 20,
-    left: 20,
-    zIndex: 99999
   },
   complete: {
     width: 100,
