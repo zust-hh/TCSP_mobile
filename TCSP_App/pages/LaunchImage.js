@@ -15,6 +15,7 @@ import List from './TestList';
 import Admin from './Admin';
 import TravelMain from './TravelMain';
 import TravelMap from './TravelMap';
+import UserHome from './UserHome';
 class LaunchImage extends Component {
   static navigationOptions = {
     title: 'Launch',    //设置navigator的title
@@ -24,7 +25,7 @@ class LaunchImage extends Component {
     return (
       <View>
         <Button
-          onPress={ () => navigate('TravelMain')}
+          onPress={ () => navigate('UserHome')}
           title="Chat with Lucy"
         />
       </View>
@@ -40,4 +41,5 @@ export default SimpleApp = StackNavigator({
   Admin: { screen: Admin },
   TravelMain: { screen: TravelMain },
   TravelMap: { screen: TravelMap },
+  UserHome: { screen: UserHome },
 });

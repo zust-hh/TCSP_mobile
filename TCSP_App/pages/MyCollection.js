@@ -12,7 +12,7 @@ import {
 var width = Dimensions.get('window').width;
 export default class MyCollection extends Component {
   static navigationOptions = {
-    headerTitle: '我的收藏',
+    headerTitle: '收藏',
     headerStyle: { elevation: 0, backgroundColor: 'rgb(65, 192, 115)' },
     headerBackTitleStyle: { color: '#FFFFFF' },
     headerTintColor: '#fff',

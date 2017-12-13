@@ -12,11 +12,10 @@ import { StackNavigator } from 'react-navigation';
 import MyCollection from './MyCollection';
 import MyFocus from './MyFocus';
 import MyItinerary from './MyItinerary';
-import OtherUserHome from './OtherUserHome';
 var width = Dimensions.get('window').width;
-class UserHome extends Component {
+class OtherUserHome extends Component {
   static navigationOptions = {
-    header: false,
+    title: 'xxx的个人空间'
   }
   render() {
     return (
@@ -33,20 +32,17 @@ class UserHome extends Component {
         <View style={styles.usercontent}>
           <TouchableOpacity style={styles.onecontent} activeOpacity={0.5} onPress={() => this.props.navigation.navigate('MyCollection')}>
             <Image style={{ width: 40, height: 40, marginBottom: 10 }} source={require('../public/images/mysc.png')} />
-            <Text>我的收藏</Text>
+            <Text>Ta的收藏</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.onecontent} activeOpacity={0.5} onPress={() => this.props.navigation.navigate('MyFocus')}>
             <Image style={{ width: 40, height: 40, marginBottom: 10 }} source={require('../public/images/mygz.png')} />
-            <Text>我的关注</Text>
+            <Text>Ta的关注</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.onecontent} activeOpacity={0.5} onPress={() => this.props.navigation.navigate('MyItinerary')}>
             <Image style={{ width: 40, height: 40, marginBottom: 10 }} source={require('../public/images/myxc.png')} />
-            <Text>我的行程</Text>
+            <Text>Ta的行程</Text>
           </TouchableOpacity>
         </View>
-        <TouchableOpacity style={styles.exit} activeOpacity={0.5}>
-          <Text style={{ color: 'red', fontSize: 16 }}>退出登录</Text>
-        </TouchableOpacity>
       </View>
     );
   }
@@ -86,9 +82,8 @@ const styles = StyleSheet.create({
 })
 
 export default SimpleApp = StackNavigator({
-  UserHome: { screen: UserHome },
+  OtherUserHome: { screen: OtherUserHome },
   MyCollection: { screen: MyCollection },
   MyFocus: { screen: MyFocus },
   MyItinerary: { screen: MyItinerary },
-  OtherUserHome: { screen: OtherUserHome },
 });

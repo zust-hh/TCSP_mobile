@@ -12,7 +12,7 @@ import {
 var width = Dimensions.get('window').width;
 export default class MyFocus extends Component {
   static navigationOptions = {
-    headerTitle: '我的关注',
+    headerTitle: '关注',
     headerStyle: { elevation: 0, backgroundColor: 'rgb(65, 192, 115)' },
     headerBackTitleStyle: { color: '#FFFFFF' },
     headerTintColor: '#fff',
@@ -20,7 +20,9 @@ export default class MyFocus extends Component {
   render() {
     return (
       <View style={{ flex: 1 }}>
-        <TouchableOpacity style={styles.onefocus} activeOpacity={0.9}>
+        <TouchableOpacity style={styles.onefocus} activeOpacity={0.9} onPress={()=> {
+          this.props.navigation.navigate('OtherUserHome');
+        }}>
           <View style={styles.focuscontent}>
             <Image style={{ width: 50, height: 50 }} source={require('../public/images/boy.png')} />
             <View style={{ marginLeft: 15 }}>

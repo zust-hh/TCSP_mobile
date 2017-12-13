@@ -12,7 +12,7 @@ import {
 var width = Dimensions.get('window').width;
 export default class MyItinerary extends Component {
   static navigationOptions = {
-    headerTitle: '我的行程',
+    headerTitle: '发布的行程',
     headerStyle: { elevation: 0, backgroundColor: 'rgb(65, 192, 115)' },
     headerBackTitleStyle: { color: '#FFFFFF' },
     headerTintColor: '#fff',
