@@ -10,7 +10,8 @@ import {
   Linking,
   ImageBackground,
 } from 'react-native';
-import { MapView, Polyline, Marker } from 'react-native-amap3d'
+import { MapView, Polyline, Marker } from 'react-native-amap3d';
+import {Badge} from 'teaset';
 export default class TravelMap extends Component {
   constructor(props) {
     super(props);
@@ -52,13 +53,13 @@ export default class TravelMap extends Component {
             return (<Marker
               key={index}
               draggable={false}
-              image="require('../public/images/marker.png')"
-              icon={() =>
+              icon={() => (
                 <View style={styles.customMarker}>
-                  {/* <Image source={require('../public/images/marker.png')} style={{width:30,height:30}}/> */}
-                  <Text style={styles.markerText}>{index + 1}</Text>
+                  <Badge style={{ backgroundColor: '#5bc0de', paddingLeft: 0, paddingRight: 0 }}>
+                    <Text style={{ color: '#fff' }}>{index + 1}</Text>
+                  </Badge>
                 </View>
-              }
+              )}
               coordinate={{
                 latitude: onePointLati,
                 longitude: onePointLongi,
@@ -110,6 +111,8 @@ export default class TravelMap extends Component {
 const styles = StyleSheet.create({
   markerText: {
     color: '#fff',
+    width: 30,
+    height: 30,
   },
   customMarker: {
     width: 30,
