@@ -10,15 +10,14 @@ import {
   Dimensions,
   ScrollView,
 } from 'react-native';
-import { StackNavigator } from 'react-navigation';
-import { Button } from 'teaset';
+import { Button, TeaNavigator, BasePage, NavigationBar } from 'teaset';
 import Comment from './Comment';
 import Feel from "./Feel";
 var width = Dimensions.get('window').width;
-class PointDetails extends Component {
-  static navigationOptions = {
-    header: false,
-  }
+export default class PointDetails extends Component {
+  static defaultProps = {
+    scene: TeaNavigator.SceneConfigs.PushFromRight,
+  };
   constructor(props) {
     super(props);
     this.state = {
@@ -50,15 +49,23 @@ class PointDetails extends Component {
     }
   }
   render() {
-    const { navigate } = this.props.navigation;
     return (
       <ScrollView style={styles.container}>
+        <NavigationBar
+          style={{ backgroundColor: 'rgb(65, 192, 115)' }}
+          type='ios'
+          tintColor='#fff'
+          title='添加行程'
+          leftView={<NavigationBar.BackButton title='Back'
+            onPress={() => this.navigator.pop()
+            } />}
+        />
         <Image source={require('../public/images/image2.jpg')} style={styles.headimage} />
         <View style={styles.feel}>
           <View style={styles.feelhead}>
             <Image source={require('../public/images/feelicon.png')} style={styles.feelheadicon} />
             <Text style={{ fontWeight: 'bold' }}>游记分享</Text>
-            <Button type='danger' title='修改感想' onPress={() => navigate('Feel')} style={{position:'absolute',height:20,right:10}}/>
+            <Button type='danger' title='修改感想' onPress={() => navigate('Feel')} style={{ position: 'absolute', height: 20, right: 10 }} />
           </View>
           <View style={styles.feelcontent}>
             <Text>       {this.state.onePoint.feel}</Text>
@@ -175,8 +182,8 @@ const styles = StyleSheet.create({
   }
 });
 
-export default SimpleApp = StackNavigator({
-  LaunchImage: { screen: LaunchImage },
-  Comment: { screen: Comment },
-  Feel: { screen: Feel },
-});
+// export default SimpleApp = StackNavigator({
+//   LaunchImage: { screen: LaunchImage },
+//   Comment: { screen: Comment },
+//   Feel: { screen: Feel },
+// });

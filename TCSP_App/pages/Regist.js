@@ -7,7 +7,12 @@ import {
   TextInput,
   TouchableOpacity
 } from 'react-native';
-export default class Regist extends Component {
+import {TeaNavigator, BasePage} from 'teaset';
+import Login from './Login';
+export default class Regist extends BasePage {
+  static defaultProps = {
+    scene: TeaNavigator.SceneConfigs.PushFromRight,
+  };
   render() {
     return (
       <View style={styles.container}>
@@ -25,7 +30,7 @@ export default class Regist extends Component {
           <TextInput style={styles.textinput} placeholder="Your email"
             underlineColorAndroid={'transparent'} />
 
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity style={styles.button} onPress = {() => this.navigator.push({view: <Login />})}>
             <Text style={styles.btntext}>Sign up</Text>
           </TouchableOpacity>
         </View>

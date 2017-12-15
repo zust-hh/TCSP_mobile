@@ -8,18 +8,38 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import { StackNavigator } from 'react-navigation';
+// import { StackNavigator } from 'react-navigation';
 import MyCollection from './MyCollection';
 import MyFocus from './MyFocus';
 import MyItinerary from './MyItinerary';
+import { BasePage, NavigationBar,TeaNavigator } from 'teaset';
 var width = Dimensions.get('window').width;
-class OtherUserHome extends Component {
-  static navigationOptions = {
-    title: 'xxx的个人空间'
+export default class OtherUserHome extends BasePage {
+  static defaultProps = {
+    scene: TeaNavigator.SceneConfigs.PushFromRight,
+  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      UserName: '',
+
+    }
+  }
+  componentWillMount() {
+
   }
   render() {
     return (
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1 ,backgroundColor:'#eee'}}>
+        <NavigationBar
+          style={{ backgroundColor: 'rgb(65, 192, 115)' }}
+          type='ios'
+          tintColor='#fff'
+          title={this.state.UserName + '的个人空间'}
+          leftView={<NavigationBar.BackButton title='Back'
+            onPress={() => this.navigator.pop()
+            } />}
+        />
         <View style={styles.userhead}>
           <Image style={{ width: width, height: 198, position: 'absolute', top: 0, left: 0 }} source={require('../public/images/userheadimg.jpg')} />
           <View style={styles.userinfo}>
@@ -30,15 +50,15 @@ class OtherUserHome extends Component {
           </View>
         </View>
         <View style={styles.usercontent}>
-          <TouchableOpacity style={styles.onecontent} activeOpacity={0.5} onPress={() => this.props.navigation.navigate('MyCollection')}>
+          <TouchableOpacity style={styles.onecontent} activeOpacity={0.5} onPress={() => this.navigator.push({ view: <MyCollection /> })}>
             <Image style={{ width: 40, height: 40, marginBottom: 10 }} source={require('../public/images/mysc.png')} />
             <Text>Ta的收藏</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.onecontent} activeOpacity={0.5} onPress={() => this.props.navigation.navigate('MyFocus')}>
+          <TouchableOpacity style={styles.onecontent} activeOpacity={0.5} onPress={() => this.navigator.push({ view: <MyFocus /> })}>
             <Image style={{ width: 40, height: 40, marginBottom: 10 }} source={require('../public/images/mygz.png')} />
             <Text>Ta的关注</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.onecontent} activeOpacity={0.5} onPress={() => this.props.navigation.navigate('MyItinerary')}>
+          <TouchableOpacity style={styles.onecontent} activeOpacity={0.5} onPress={() => this.navigator.push({ view: <MyItinerary /> })}>
             <Image style={{ width: 40, height: 40, marginBottom: 10 }} source={require('../public/images/myxc.png')} />
             <Text>Ta的行程</Text>
           </TouchableOpacity>
@@ -81,9 +101,9 @@ const styles = StyleSheet.create({
   }
 })
 
-export default SimpleApp = StackNavigator({
-  OtherUserHome: { screen: OtherUserHome },
-  MyCollection: { screen: MyCollection },
-  MyFocus: { screen: MyFocus },
-  MyItinerary: { screen: MyItinerary },
-});
+// export default SimpleApp = StackNavigator({
+//   OtherUserHome: { screen: OtherUserHome },
+//   MyCollection: { screen: MyCollection },
+//   MyFocus: { screen: MyFocus },
+//   MyItinerary: { screen: MyItinerary },
+// });

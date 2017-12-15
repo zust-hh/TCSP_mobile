@@ -31,12 +31,8 @@ class Login extends Component {
             this.props.navigation.navigate('Home');
         }
     }
-    // static navigationOptions = {
-    //     header: false
-    // }
-
     render() {
-        // const { navigate } = this.props.navigation;
+        
         return (
             <View style={styles.views}>
                 <KeyboardAwareScrollView contentContainerStyle={{ flex: 1 }}

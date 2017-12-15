@@ -12,34 +12,39 @@ import {
 } from 'react-native';
 import forge from 'node-forge';
 import ButtonComponent from 'react-native-button-component';
+import { TeaNavigator, BasePage, NavigationBar } from 'teaset';
 var { height, width } = Dimensions.get('window');
-export default class TravelMain extends Component {
+export default class TravelMain extends BasePage {
+  static defaultProps = ({
+    scene: TeaNavigator.SceneConfigs.PushFromRight,
+  });
   constructor(props) {
     super(props);
     this.renderItem = this.renderItem.bind(this);
     this.renderHeaderItem = this.renderHeaderItem.bind(this);
     this.renderFooterItem = this.renderFooterItem.bind(this);
     this.state = {
+      travelName: '',
       pointList: [{
         pointNum: 1,
         pointName: '上海的奇妙之旅1',
         pointCity: '上海市',
-        pointLongi:116.980724,
-        pointLati:39.989584,
+        pointLongi: 116.980724,
+        pointLati: 39.989584,
       },
       {
         pointNum: 2,
         pointName: '上海的奇妙之旅2',
         pointCity: '上海市',
-        pointLongi:115.480724,
-        pointLati:39.989584,
+        pointLongi: 115.480724,
+        pointLati: 39.989584,
       },
       {
         pointNum: 3,
         pointName: '上海的奇妙之旅3',
         pointCity: '上海市',
-        pointLongi:116.080724,
-        pointLati:39.989584,
+        pointLongi: 116.080724,
+        pointLati: 39.989584,
       }],
       dataSource: new ListView.DataSource({
         rowHasChanged: (row1, row2) => row1 !== row2,
@@ -47,19 +52,8 @@ export default class TravelMain extends Component {
       pointEn: []
     }
   }
-  static navigationOptions = ({ navigation }) => ({
-    headerTitle: '第一次旅行',
-    headerStyle: { elevation: 0, backgroundColor: 'rgb(65, 192, 115)' },
-    headerBackTitleStyle: { color: '#FFFFFF' },
-    headerTintColor: '#fff',
-    headerRight: <TouchableOpacity style={styles.menubtn} onPress={()=>navigation.navigate('TravelMap',{pointList:navigation.state.params.pointList})}>
-    <Image source={require('../public/images/map.png')} style={{width:27,height:27}}/>
-  </TouchableOpacity>,
-  });
   componentDidMount() {
-    this.props.navigation.setParams({
-      pointList: this.state.pointList
-    })
+    this.state.pointList = this.props.pointList;
   }
   //进行渲染数据
   renderContent(dataSource) {
@@ -185,8 +179,22 @@ export default class TravelMain extends Component {
     const { navigate } = this.props.navigation;
     return (
       <View style={{ flex: 1 }}>
+        <NavigationBar
+          style={{ backgroundColor: 'rgb(65, 192, 115)' }}
+          type='ios'
+          tintColor='#fff'
+          title={this.state.travelName}
+          leftView={<NavigationBar.BackButton title='Back'
+            onPress={() => this.navigator.pop()
+            } />}
+          rightView={
+            <TouchableOpacity style={styles.menubtn} onPress={() => this.navigator.push({view: <TravelMap pointList={this.state.pointList}/>})}>
+              <Image source={require('../public/images/map.png')} style={{ width: 27, height: 27 }} />
+            </TouchableOpacity>
+          }
+        />
         <View style={styles.travelhead}>
-          <Image source={require('../public/images/image2.jpg')} style={{width:width,height:160}}/>
+          <Image source={require('../public/images/image2.jpg')} style={{ width: width, height: 160 }} />
         </View>
         <View style={{ flex: 1, backgroundColor: '#f5f5f5', paddingTop: 20 }}>
           {this.renderContent(this.state.dataSource.cloneWithRows(

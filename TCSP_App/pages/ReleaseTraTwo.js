@@ -10,9 +10,11 @@ import {
 import OneSearch from './components/OneSearch';
 import OnePoint from './components/OnePoint';
 import { MapView, Marker } from 'react-native-amap3d';
-import { SearchInput, Button, Badge, Theme, Label, Drawer, ListRow } from 'teaset';
+import TravelList from './TravelList';
+import { SearchInput, Button, Badge, Theme, Label, Drawer, ListRow, TeaNavigator, BasePage, NavigationBar } from 'teaset';
 import ButtonComponent from 'react-native-button-component';
-export default class ReleaseTraTwo extends Component {
+export default class ReleaseTraTwo extends BasePage {
+
   constructor(props) {
     super(props);
     this.state = {
@@ -37,26 +39,22 @@ export default class ReleaseTraTwo extends Component {
     });
   }
   //navigation设置
-  static navigationOptions = ({ navigation }) => ({
-    title: `${navigation.state.params.start}`,
-    headerRight: <TouchableOpacity style={styles.menubtn} onPress={navigation.state.params.navigatePress}>
-      <Image source={require('../public/images/menu.png')} />
-      <Badge type='capsule' count={navigation.state.params.pointNum} />
-    </TouchableOpacity>,
-    headerStyle: { elevation: 0 },
+  static defaultProps = ({
+    scene: TeaNavigator.SceneConfigs.PushFromRight,
   });
-  //首次加载
-  componentDidMount() {
-    this.props.navigation.setParams({
-      pointNum: this.state.pointNum,
-      navigatePress: this.navigatePress
-    })
-  }
+  // static navigationOptions = ({ navigation }) => ({
+  //   title: `${navigation.state.params.start}`,
+  //   headerRight: <TouchableOpacity style={styles.menubtn} onPress={navigation.state.params.navigatePress}>
+  //     <Image source={require('../public/images/menu.png')} />
+  //     <Badge type='capsule' count={navigation.state.params.pointNum} />
+  //   </TouchableOpacity>,
+  //   headerStyle: { elevation: 0 },
+  // });
   //首次加载之前
   componentWillMount() {
-    let startName = JSON.stringify(this.props.navigation.state);
-    let start = JSON.parse(startName);
-    let geouri = 'http://restapi.amap.com/v3/geocode/geo?key=a12fe0a773225a0edbb395bce289a441&address=' + start.params.start;
+    // let startName = JSON.stringify(this.props.start);
+    // let start = JSON.parse(startName);
+    let geouri = 'http://restapi.amap.com/v3/geocode/geo?key=a12fe0a773225a0edbb395bce289a441&address=' + this.props.start;
     fetch(geouri)
       .then((response) => {
         if (response.ok) {
@@ -119,7 +117,8 @@ export default class ReleaseTraTwo extends Component {
       });
   }
   endEdit() {
-    this.props.navigation.navigate('TravelList',{state:1,pointList:this.state.pointList});
+    // this.props.navigation.navigate('TravelList',{state:1,pointList:this.state.pointList});
+    this.navigator.push({ view: <TravelList state={1} pointList={this.state.pointList} />})
   }
   //右侧弹出抽屉View
   pointListView() {
@@ -158,10 +157,25 @@ export default class ReleaseTraTwo extends Component {
     )
   }
   render() {
-    // let drawer = Drawer.show(pointList, 'right');
-    const { params } = this.props.navigation.state;
+    // let drawer = Drawer.show(pointListView, 'right');
+    // const { params } = this.props.navigation.state;
     return (
       <View style={styles.note}>
+        <NavigationBar
+          style={{ backgroundColor: 'rgb(65, 192, 115)',zIndex:10000 }}
+          type='ios'
+          tintColor='#fff'
+          title={this.props.title}
+          leftView={<NavigationBar.BackButton title='Back'
+            onPress={() => this.navigator.pop()
+            } />}
+          rightView={
+            <TouchableOpacity style={styles.menubtn} onPress={this.navigatePress}>
+              <Image source={require('../public/images/menu.png')} />
+              <Badge type='capsule' count={this.state.pointNum} />
+            </TouchableOpacity>
+          }
+        />
         <View style={styles.searchs}>
           <SearchInput style={styles.search} placeholder='search address' onChangeText={
             (text) => {
@@ -262,11 +276,7 @@ export default class ReleaseTraTwo extends Component {
         <Button
           onPress={() => {
             let pointNum = this.state.pointNum + 1;
-            this.setState({ pointNum }, () => {
-              this.props.navigation.setParams({
-                pointNum: this.state.pointNum
-              });
-            });
+            this.setState({ pointNum });
             let onePointInfo = {
               "pointNum": this.state.pointNum + 1,
               "pointName": this.state.FormatAdd,
@@ -282,8 +292,8 @@ export default class ReleaseTraTwo extends Component {
           style={styles.addbtn}
         >
         </Button>
-        <TouchableOpacity style={styles.next} onPress = {this.endEdit.bind(this)}>
-          <Image style={{ width: 40, height: 40}} source={require('../public/images/next.png')} />
+        <TouchableOpacity style={styles.next} onPress={this.endEdit.bind(this)}>
+          <Image style={{ width: 40, height: 40 }} source={require('../public/images/next.png')} />
         </TouchableOpacity>
       </View>
     );
@@ -320,7 +330,8 @@ const styles = StyleSheet.create({
     zIndex: 9999,
     width: Dimensions.get('window').width,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    marginTop: 65,
   },
   search: {
     width: 300,

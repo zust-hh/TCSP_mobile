@@ -5,11 +5,15 @@ import {
   Text,
   View,
   ScrollView,
+  Button
 } from 'react-native';
+import { TeaNavigator, NavigationPage, NavigationBar } from 'teaset';
 // import { StackNavigator } from 'react-navigation';
-import {Button,TabView,TeaNavigator, BasePage} from 'teaset';
 import Home from './Home';
+import Regist from './Regist';
+import Login from './Login';
 import List from './TestList';
+import Admin from './Admin';
 import Comment from './Comment';
 import Feel from './Feel';
 import FindHome from './FindHome';
@@ -24,66 +28,45 @@ import TravelList from './TravelList';
 import TravelMain from './TravelMain';
 import TravelMap from './TravelMap';
 import UserHome from './UserHome';
-export default class Admin extends BasePage {
-  // static navigationOptions = {
-  //   header: false,
-  // }
+
+export default class Router extends NavigationPage {
   static defaultProps = {
-    scene: TeaNavigator.SceneConfigs.PushFromRight,
+    ...NavigationPage.defaultProps,
+    title: 'Teaset Example',
   };
+  constructor(props) {
+    super(props);
+    this.state = {
+      status: 0,
+    }
+  }
+  componentDidMount() {
+    // if(this.state.status == 0) {
+    //   this.navigator.push({view: <Home />})
+    // }
+    // else {
+    //   this.navigator.push({view: <Login />})
+    // }
+  }
   render() {
     return (
-      <TabView style={{ flex: 1 }} type='projector'>
-        <TabView.Sheet
-          title='首页'
-          icon={require('../public/images/home.png')}
-          activeIcon={require('../public/images/home_active.png')}
-        >
-          <Home />
-        </TabView.Sheet>
-        <TabView.Sheet
-          title='发现'
-          icon={require('../public/images/chart.png')}
-          activeIcon={require('../public/images/chart_active.png')}
-        >
-          <FindHome />
-        </TabView.Sheet>
-        <TabView.Sheet
-          title='我的'
-          icon={require('../public/images/me.png')}
-          activeIcon={require('../public/images/me_active.png')}
-          badge={1}
-        >
-          <UserHome />
-        </TabView.Sheet>
-      </TabView>
+      // <View>
+      //   <Button onPress={()=>this.navigator.push({view:<Home/>})}
+      //   title='132'>
+
+      //   </Button>
+      // </View>
+      this.state.status == 0 ? <Home /> : <Login />
     );
   }
-
 }
-
-const styles = StyleSheet.create({
-  flex: {
-    flex: 1,
-  },
-  detail_text: {
-    fontSize: 16,
-    margin: 10
-  },
-  back_text: {
-    width: 80,
-    backgroundColor: 'gray',
-    color: 'white',
-    textAlign: 'center',
-    fontSize: 18,
-    alignSelf: 'center',
-    marginTop: 20
-  }
-});
-// export default SimpleApp1 = StackNavigator({
-//   Admin: { screen: Admin },
+// export default SimpleApp = StackNavigator({
+//   Router: { screen: Router },
 //   Home: { screen: Home },
+//   Regist: { screen: Regist },
+//   Login: { screen: Login },
 //   List: { screen: List },
+//   Admin: { screen: Admin },
 //   Comment: { screen: Comment },
 //   Feel: { screen: Feel },
 //   FindHome: { screen: FindHome },

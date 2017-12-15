@@ -8,11 +8,15 @@ import {
   Image
 } from 'react-native';
 import { MapView, HeatMap, Marker } from 'react-native-amap3d';
-import { StackNavigator } from 'react-navigation';
+import {TeaNavigator, BasePage} from 'teaset';
+// import { StackNavigator } from 'react-navigation';
 import ReleaseTraOne from './ReleaseTraOne';
-import ReleaseTraTwo from './ReleaseTraTwo';
-import TravelList from './TravelList';
-class Home extends Component {
+// import ReleaseTraTwo from './ReleaseTraTwo';
+// import TravelList from './TravelList';
+export default class Home extends BasePage {
+  static defaultProps = {
+    scene: TeaNavigator.SceneConfigs.PushFromRight,
+  };
   constructor(props) {
     super(props);
     this.state = {
@@ -20,11 +24,11 @@ class Home extends Component {
       longitude: 116.37296,
     }
   }
-  static navigationOptions = {
-    header: false,
-  }
+  // static navigationOptions = {
+  //   header: false,
+  // }
   // packJson = [{ "latitude": 39.5, "longitude": 116, "count": 8 }, { "latitude": 40.5, "longitude": 116, "count": 10 }];
-  packJson = (new Array(5000)).fill(0).map(i => ({
+  packJson = (new Array(50)).fill(0).map(i => ({
     latitude: 29.5 + (Math.random()),
     longitude: 119.5 + (Math.random()),
   }))
@@ -52,7 +56,6 @@ class Home extends Component {
   // }
 
   render() {
-    const { navigate } = this.props.navigation;
     return (
       <View style={styles.body}>
         <MapView
@@ -79,7 +82,7 @@ class Home extends Component {
             coordinates={this._coordinates} />
         </MapView>
         <View style={styles.button}>
-          <TouchableHighlight onPress={() => navigate('ReleaseTraOne')} style={styles.btn} activeOpacity={0.7} underlayColor='rgb(53,122,232)'>
+          <TouchableHighlight onPress={() => this.navigator.push({view: <ReleaseTraOne />})} style={styles.btn} activeOpacity={0.7} underlayColor='rgb(53,122,232)'>
             <Image style={{ width: 16, height: 16, }} source={require('../public/images/plus.png')} />
           </TouchableHighlight>
         </View>
@@ -88,13 +91,13 @@ class Home extends Component {
   }
 }
 
-export default SimpleApp = StackNavigator({
-  Home: { screen: Home },
-  ReleaseTraOne: { screen: ReleaseTraOne },
-  ReleaseTraTwo: { screen: ReleaseTraTwo },
-  TravelList: { screen: TravelList },
+// export default SimpleApp = StackNavigator({
+//   Home: { screen: Home },
+//   ReleaseTraOne: { screen: ReleaseTraOne },
+//   ReleaseTraTwo: { screen: ReleaseTraTwo },
+//   TravelList: { screen: TravelList },
 
-});
+// });
 
 const styles = StyleSheet.create({
   body: {

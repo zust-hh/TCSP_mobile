@@ -6,8 +6,9 @@ import {
   Image,
   TouchableHighlight,
 } from 'react-native';
-import { Input } from 'teaset';
-export default class ReleaseTraOne extends Component {
+import { Input, TeaNavigator, BasePage, NavigationBar } from 'teaset';
+import ReleaseTraTwo from './ReleaseTraTwo';
+export default class ReleaseTraOne extends BasePage {
   constructor(props) {
     super(props);
     this.state = {
@@ -15,14 +16,21 @@ export default class ReleaseTraOne extends Component {
       startPoint: '北京'
     }
   }
-  static navigationOptions = {
-    title: '发布行程',    //设置navigator的title
-    headerStyle: {elevation: 0},
-  }
+  static defaultProps = {
+    scene: TeaNavigator.SceneConfigs.PushFromRight,
+  };
   render() {
-    const { navigate } = this.props.navigation;
     return (
       <View style={styles.note}>
+        <NavigationBar
+          style={{ backgroundColor: 'rgb(65, 192, 115)' }}
+          type='ios'
+          tintColor='#fff'
+          title='添加行程'
+          leftView={<NavigationBar.BackButton title='Back'
+            onPress={() => this.navigator.pop()
+            } />}
+        />
         <Input
           style={styles.input}
           onChangeText={text => this.setState({ valueCustom: text })}
@@ -30,8 +38,8 @@ export default class ReleaseTraOne extends Component {
           placeholderTextColor='rgb(200,200,200)'
         />
         <View style={styles.upload}>
-          <Image style={{ width: 60, height: 60,marginBottom:25,marginTop:45 }} source={require('../public/images/imgupload.png')} />
-          <Text style={{fontSize:12}}>封面图片</Text>
+          <Image style={{ width: 60, height: 60, marginBottom: 25, marginTop: 45 }} source={require('../public/images/imgupload.png')} />
+          <Text style={{ fontSize: 12 }}>封面图片</Text>
         </View>
         <Input
           style={styles.input}
@@ -39,7 +47,12 @@ export default class ReleaseTraOne extends Component {
           placeholder="行程起点城市"
           placeholderTextColor='rgb(200,200,200)'
         />
-        <TouchableHighlight onPress={() => navigate('ReleaseTraTwo',{title:this.state.valueCustom,start:this.state.startPoint})} style={styles.gototwo} activeOpacity={0.7} underlayColor='rgb(53,122,232)'>
+        <TouchableHighlight
+          onPress={
+            () => this.navigator.push({ view: <ReleaseTraTwo title={this.state.valueCustom} start={this.state.startPoint} /> })
+            // () => navigate('ReleaseTraTwo',{title:this.state.valueCustom,start:this.state.startPoint})
+          }
+          style={styles.gototwo} activeOpacity={0.7} underlayColor='rgb(53,122,232)'>
           <Text>开始编辑</Text>
         </TouchableHighlight>
       </View>
@@ -55,7 +68,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   input: {
-    marginTop: 50,
+    marginTop: 80,
     width: 200,
     backgroundColor: 'white',
     color: 'black'

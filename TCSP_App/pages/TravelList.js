@@ -13,9 +13,11 @@ import {
 } from 'react-native';
 import forge from 'node-forge';
 import ButtonComponent from 'react-native-button-component';
+// import TravelMain from './TravelMain';
+import {TeaNavigator, BasePage} from 'teaset';
 var { height, width } = Dimensions.get('window');
 
-class TravelList extends Component {
+class TravelList extends BasePage {
   constructor(props) {
     super(props);
     this.renderItem = this.renderItem.bind(this);
@@ -29,10 +31,10 @@ class TravelList extends Component {
       pointEn: []
     }
   }
-  static navigationOptions = {
-    header: false,
-  }
   //进行渲染数据
+  static defaultProps = ({
+    scene: TeaNavigator.SceneConfigs.PushFromRight,
+  });
   renderContent(dataSource) {
     return (
       <ListView
@@ -149,7 +151,7 @@ class TravelList extends Component {
     );
   }
   componentWillMount() {
-    var pointList = JSON.parse(JSON.stringify(this.props.navigation)).state.params.pointList;
+    var pointList = this.props.pointList;
     this.setState({ pointList });
   }
   render() {
@@ -164,14 +166,18 @@ class TravelList extends Component {
             this.state.pointList.slice(1, this.state.pointList.length - 1) === undefined ? [] : this.state.pointList.slice(1, this.state.pointList.length - 1)))}
         </View>
         <Button
-          onPress={() => this.props.navigation.goBack()}
+          onPress={() => this.navigator.pop()}
           // backgroundColors={['#6A6AD5', '#6F86D9']}
           title="返回编辑"
           style={styles.goback}
         >
         </Button>
         <Button
-          onPress={() => {this.props.navigation.navigate('Home')}}
+          onPress={
+            () => {
+              // this.navigator.push({view: <TravelMain />})
+            }
+          }
           // backgroundColors={['#4DC7A4', '#66D37A']}
           title="完成创建"
           style={styles.complete}

@@ -10,22 +10,33 @@ import {
   Dimensions,
 } from 'react-native';
 import { Rating, AirbnbRating } from 'react-native-ratings';
-import { Input } from 'teaset';
+import { Input, TeaNavigator, NavigationBar, BasePage } from 'teaset';
 var width = Dimensions.get('window').width;
-export default class Comment extends Component {
-  static navigationOptions = ({ navigation }) => ({
-    title: '小和山风景区',
-    // title: `${navigation.state.params.start}`,
-    headerRight: <TouchableOpacity onPress={() => { }} activeOpacity={0.7} >
-      <Image source={require('../public/images/send.png')} style={{ width: 25, height: 25, marginRight: 15 }} />
-    </TouchableOpacity>,
-    headerStyle: { elevation: 0, backgroundColor: 'rgb(65, 192, 116)' },
-    headerBackTitleStyle: { color: '#FFFFFF' },
-    headerTintColor: '#fff',
-  });
+export default class Comment extends BasePage {
+  static defaultProps = {
+    scene: TeaNavigator.SceneConfigs.PushFromRight,
+  };
+  constructor(props) {
+    super(props);
+    this.state = {
+
+    }
+  }
   render() {
     return (
       <View style={styles.container}>
+        <NavigationBar
+          style={{ backgroundColor: 'rgb(65, 192, 115)' }}
+          type='ios'
+          tintColor='#fff'
+          title='评论'
+          leftView={<NavigationBar.BackButton title='Back'
+            onPress={() => this.navigator.pop()
+            } />}
+          rightView={<TouchableOpacity onPress={() => { }} activeOpacity={0.7} >
+            <Image source={require('../public/images/send.png')} style={{ width: 25, height: 25, marginRight: 15 }} />
+          </TouchableOpacity>}
+        />
         <View style={styles.commenttop}>
           <AirbnbRating
             count={5}

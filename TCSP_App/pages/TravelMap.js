@@ -11,7 +11,7 @@ import {
   ImageBackground,
 } from 'react-native';
 import { MapView, Polyline, Marker } from 'react-native-amap3d';
-import {Badge} from 'teaset';
+import { Badge, BasePage, NavigationBar, TeaNavigator } from 'teaset';
 export default class TravelMap extends Component {
   constructor(props) {
     super(props);
@@ -19,17 +19,10 @@ export default class TravelMap extends Component {
       linecount: []
     }
   }
-  static navigationOptions = ({ navigation }) => ({
-    headerTitle: '行程地图',
-    headerStyle: { elevation: 0, backgroundColor: 'rgb(65, 192, 115)' },
-    headerBackTitleStyle: { color: '#FFFFFF' },
-    headerTintColor: '#fff',
-  });
-  _onPress = () => Alert.alert('onPress');
   componentWillMount() {
     let linecount = [];
-    for (let i = 0; i < this.props.navigation.state.params.pointList.length - 1; i = i + 1) {
-      let line = [this.props.navigation.state.params.pointList[i].pointLati, this.props.navigation.state.params.pointList[i].pointLongi, this.props.navigation.state.params.pointList[i + 1].pointLati, this.props.navigation.state.params.pointList[i + 1].pointLongi];
+    for (let i = 0; i < this.props.pointList.length - 1; i = i + 1) {
+      let line = [this.props.pointList[i].pointLati, this.props.pointList[i].pointLongi, this.props.pointList[i + 1].pointLati, this.props.pointList[i + 1].pointLongi];
       linecount.push(line);
     }
     this.setState({ linecount })
@@ -42,8 +35,17 @@ export default class TravelMap extends Component {
           longitude: this.state.linecount[0][1],
         }}
       >
+        <NavigationBar
+          style={{ backgroundColor: 'rgb(65, 192, 115)' }}
+          type='ios'
+          tintColor='#fff'
+          title='行程地图'
+          leftView={<NavigationBar.BackButton title='Back'
+            onPress={() => this.navigator.pop()
+            } />}
+        />
         {
-          this.props.navigation.state.params.pointList.map((onePoint, index) => {
+          this.state.pointList.map((onePoint, index) => {
             onePointNum = JSON.parse(JSON.stringify(onePoint)).pointNum;
             onePointName = JSON.parse(JSON.stringify(onePoint)).pointName;
             onePointCity = JSON.parse(JSON.stringify(onePoint)).pointCity;
