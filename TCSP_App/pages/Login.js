@@ -11,28 +11,47 @@ import {
     AsyncStorage
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import Admin from './Admin';
+import Regist from './Regist';
+import { TeaNavigator, BasePage } from 'teaset';
 
-class Login extends Component {
+class Login extends BasePage {
     constructor(props) {
         super(props);
         this.state = {
             username: '',
-            password: '',
+            password: ''
         }
     }
-    
-    ComponentDidMount() {
-        this._loadInitialState().done();
-    }
-
-    _loadInitialState = async () => {
-        var value = await AsyncStorage.getItem('user');
-        if (value !== null) {
-            this.props.navigation.navigate('Home');
-        }
+    static defaultProps = {
+        scene: TeaNavigator.SceneConfigs.PushFromRight,
+    };
+    login = () => {
+        fetch('http://192.168.1.113:8080/account/login', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                userName: this.state.username,
+                password: this.state.password
+            }),
+            credentials: 'include'
+        })
+            .then((response) => response.json())
+            .then((res) => {
+                if (res.status == 1) {
+                    this.navigator.push({ view: <Admin /> })
+                }
+                else {
+                    alert(res.message);
+                }
+            })
+            .done();
     }
     render() {
-        
+
         return (
             <View style={styles.views}>
                 <KeyboardAwareScrollView contentContainerStyle={{ flex: 1 }}
@@ -55,37 +74,18 @@ class Login extends Component {
                             onPress={this.login}>
                             <Text>Log in</Text>
                         </TouchableOpacity>
+                        <TouchableOpacity
+                            style={styles.btn}
+                            onPress={() => this.navigator.push({ view: <Regist /> })}>
+                            <Text>现在注册</Text>
+                        </TouchableOpacity>
                     </View>
                 </KeyboardAwareScrollView>
             </View>
         );
     }
 
-    login = () => {
-        this.props.navigation.navigate('Home');
-        // fetch('http://baidu.com', {
-        //     method: 'POST',
-        //     headers: {
-        //         'Accept': 'application/json',
-        //         'Content-Type': 'application/json',
-        //     },
-        //     body: JSON.stringify({
-        //         username: this.state.username,
-        //         password: this.state.password
-        //     })
-        // })
-        //     .then((response) => response.json())
-        //     .then((res) => {
-        //         if (res.success === true) {
-        //             AsyncStorage.setItem('user', res.user);
-        //             this.props.navigation.navigate('Home');
-        //         }
-        //         else {
-        //             alert(res.message);
-        //         }
-        //     })
-        //     .done();
-    }
+
 }
 
 const styles = StyleSheet.create({

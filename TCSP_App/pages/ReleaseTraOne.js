@@ -5,6 +5,7 @@ import {
   View,
   Image,
   TouchableHighlight,
+  TouchableOpacity
 } from 'react-native';
 import { Input, TeaNavigator, BasePage, NavigationBar } from 'teaset';
 import ReleaseTraTwo from './ReleaseTraTwo';
@@ -12,13 +13,21 @@ export default class ReleaseTraOne extends BasePage {
   constructor(props) {
     super(props);
     this.state = {
-      valueCustom: '行程标题',
-      startPoint: '北京'
+      valueCustom: '',
+      startPoint: ''
     }
   }
   static defaultProps = {
     scene: TeaNavigator.SceneConfigs.PushFromRight,
   };
+  gototwo = () => {
+    if (this.state.valueCustom != '' && this.state.startPoint != '') {
+      this.navigator.push({ view: <ReleaseTraTwo title={this.state.valueCustom} start={this.state.startPoint} /> })
+    }
+    else {
+      alert('请先填写信息');
+    }
+  }
   render() {
     return (
       <View style={styles.note}>
@@ -37,10 +46,10 @@ export default class ReleaseTraOne extends BasePage {
           placeholder="行程标题"
           placeholderTextColor='rgb(200,200,200)'
         />
-        <View style={styles.upload}>
+        <TouchableOpacity style={styles.upload} activeOpcity={0.9} onPress={()=> {}}>
           <Image style={{ width: 60, height: 60, marginBottom: 25, marginTop: 45 }} source={require('../public/images/imgupload.png')} />
           <Text style={{ fontSize: 12 }}>封面图片</Text>
-        </View>
+        </TouchableOpacity>
         <Input
           style={styles.input}
           onChangeText={text => this.setState({ startPoint: text })}
@@ -48,10 +57,7 @@ export default class ReleaseTraOne extends BasePage {
           placeholderTextColor='rgb(200,200,200)'
         />
         <TouchableHighlight
-          onPress={
-            () => this.navigator.push({ view: <ReleaseTraTwo title={this.state.valueCustom} start={this.state.startPoint} /> })
-            // () => navigate('ReleaseTraTwo',{title:this.state.valueCustom,start:this.state.startPoint})
-          }
+          onPress={this.gototwo}
           style={styles.gototwo} activeOpacity={0.7} underlayColor='rgb(53,122,232)'>
           <Text>开始编辑</Text>
         </TouchableHighlight>

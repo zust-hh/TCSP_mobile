@@ -22,6 +22,21 @@ export default class FindHome extends BasePage {
   static defaultProps = {
     scene: TeaNavigator.SceneConfigs.PushFromRight,
   };
+  componentWillMount() {
+    fetch('http://192.168.1.113:8080/suggestion/bigVList', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include'
+    })
+      .then((response) => response.json())
+      .then((res) => {
+        this.setState({ findPeopleList: res });
+      })
+      .done();
+  }
   render() {
     return (
       <SegmentedView style={{ flex: 1, backgroundColor: '#eee' }} type='carousel' barStyle={styles.bar} indicatorLineColor={'#fff'} indicatorType={'boxWidth'} indicatorLineWidth={3}>
@@ -88,18 +103,37 @@ export default class FindHome extends BasePage {
         <SegmentedView.Sheet title='大咖' titleStyle={styles.titletext} activeTitleStyle={styles.titletext}>
           <View style={{ flex: 1, alignItems: 'center', padding: 10, backgroundColor: '#fff' }}>
             <ScrollView>
-              {/* {
+              {
                 this.state.findPeopleList.map((oneuser, index) => {
                   return (
-                    <TouchableOpacity style={styles.oneuser} activeOpacity={1} onPress={()=>{this.navigator.push({view: <OtherUserHome />})}}>
+                    <TouchableOpacity style={styles.oneuser} key={index} activeOpacity={1} onPress={() => { this.navigator.push({ view: <OtherUserHome id={oneuser.id}/> }) }}>
                       <Image style={{ width: 48, height: 48, borderRadius: 24, marginRight: 15 }} source={require('../public/images/image2.jpg')} />
                       <View style={{ position: 'relative', flex: 1, justifyContent: 'center' }}>
                         <View style={{ flexDirection: 'column' }}>
-                          <Text style={{ fontSize: 18, marginBottom: 5 }}>Zust_lxz</Text>
-                          <Text style={{ fontSize: 12 }}>follow：1234</Text>
+                          <Text style={{ fontSize: 18, marginBottom: 5 }}>{oneuser.userName}</Text>
+                          <Text style={{ fontSize: 12 }}>follow:{oneuser.concernNum}</Text>
                         </View>
                         <View style={{ position: 'absolute', right: 30 }}>
-                          <TouchableOpacity>
+                          <TouchableOpacity onPress={() => {
+                            let uri = 'http://192.168.1.113:8080/concern/add/' + oneuser.id;
+                            fetch(uri, {
+                              method: 'POST',
+                              headers: {
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json',
+                              },
+                              credentials: 'include'
+                            })
+                              .then((response) => response.json())
+                              .then((res) => {
+                                if (res.status == 1) {
+
+                                }
+                                else {
+                                }
+                              })
+                              .done();
+                          }}>
                             <Image style={{ width: 24, height: 24 }} source={require('../public/images/notconcerned.png')} />
                           </TouchableOpacity>
                         </View>
@@ -107,36 +141,7 @@ export default class FindHome extends BasePage {
                     </TouchableOpacity>
                   )
                 })
-              } */}
-
-              <TouchableOpacity style={styles.oneuser} activeOpacity={1}>
-                <Image style={{ width: 48, height: 48, borderRadius: 24, marginRight: 15 }} source={require('../public/images/image1.jpg')} />
-                <View style={{ position: 'relative', flex: 1, justifyContent: 'center' }}>
-                  <View style={{ flexDirection: 'column' }}>
-                    <Text style={{ fontSize: 18, marginBottom: 5 }}>Zust_lxz</Text>
-                    <Text style={{ fontSize: 12 }}>follow：1234</Text>
-                  </View>
-                  <View style={{ position: 'absolute', right: 30 }}>
-                    <TouchableOpacity>
-                      <Image style={{ width: 24, height: 24 }} source={require('../public/images/notconcerned.png')} />
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.oneuser} activeOpacity={1}>
-                <Image style={{ width: 48, height: 48, borderRadius: 24, marginRight: 15 }} source={require('../public/images/image3.jpg')} />
-                <View style={{ position: 'relative', flex: 1, justifyContent: 'center' }}>
-                  <View style={{ flexDirection: 'column' }}>
-                    <Text style={{ fontSize: 18, marginBottom: 5 }}>Zust_lxz</Text>
-                    <Text style={{ fontSize: 12 }}>follow：1234</Text>
-                  </View>
-                  <View style={{ position: 'absolute', right: 30 }}>
-                    <TouchableOpacity>
-                      <Image style={{ width: 24, height: 24 }} source={require('../public/images/notconcerned.png')} />
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              </TouchableOpacity>
+              }
             </ScrollView>
           </View>
         </SegmentedView.Sheet>

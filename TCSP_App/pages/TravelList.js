@@ -13,8 +13,8 @@ import {
 } from 'react-native';
 import forge from 'node-forge';
 import ButtonComponent from 'react-native-button-component';
-// import TravelMain from './TravelMain';
-import {TeaNavigator, BasePage} from 'teaset';
+import TravelMain from './TravelMain';
+import { TeaNavigator, BasePage } from 'teaset';
 var { height, width } = Dimensions.get('window');
 
 class TravelList extends BasePage {
@@ -28,7 +28,7 @@ class TravelList extends BasePage {
       dataSource: new ListView.DataSource({
         rowHasChanged: (row1, row2) => row1 !== row2,
       }),
-      pointEn: []
+      pointEn: [],
     }
   }
   //进行渲染数据
@@ -55,6 +55,7 @@ class TravelList extends BasePage {
       return (this.renderCenterItem(data));
     }
   }
+  //渲染头数据
   renderHeaderItem() {
     return (
       <View style={{ flexDirection: 'row', height: 75 }}>
@@ -74,6 +75,7 @@ class TravelList extends BasePage {
       </View>
     );
   }
+  //渲染中间数据
   renderCenterItem(data) {
     return (
       <View style={{ flexDirection: 'row', height: 75 }}>
@@ -93,6 +95,7 @@ class TravelList extends BasePage {
       </View>
     );
   }
+  //渲染脚数据
   renderFooterItem() {
     if (this.state.pointList.length > 1) {
       return (
@@ -114,6 +117,7 @@ class TravelList extends BasePage {
     }
     else return null;
   }
+  //渲染块内数据
   renderCenterContent(data) {
     let md = forge.md.md5.create();
     let md5 = '20171204000102168' + data.pointName + '1435660288' + 'e7lsCMhXMlCsuflPXkrO';
@@ -154,31 +158,50 @@ class TravelList extends BasePage {
     var pointList = this.props.pointList;
     this.setState({ pointList });
   }
+  //完成创建
+  complete = () => {
+    fetch('', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        title: this.props.title,
+        routepointList: this.state.pointList
+      }),
+      credentials: 'include'
+    })
+      .then((response) => response.json())
+      .then((res) => {
+        if (res.status == 1) {
+          alert('创建成功');
+          this.navigator.push({ view: <TravelMain status={1}/> });
+        }
+        else {
+          alert(res.message);
+        }
+      })
+      .done();
+  }
   render() {
     return (
       <View style={{ flex: 1 }}>
         <View style={styles.travelhead}>
-          <Text style={{ fontSize: 30, color: '#fff', marginTop: 30, marginLeft: 25 }}>第一次旅行</Text>
-
+          <Text style={{ fontSize: 30, color: '#fff', marginTop: 30, marginLeft: 25 }}>{this.props.title}</Text>
         </View>
-        <View style={{ flex: 1, backgroundColor: '#f5f5f5',paddingTop:20 }}>
+        <View style={{ flex: 1, backgroundColor: '#f5f5f5', paddingTop: 20 }}>
           {this.renderContent(this.state.dataSource.cloneWithRows(
             this.state.pointList.slice(1, this.state.pointList.length - 1) === undefined ? [] : this.state.pointList.slice(1, this.state.pointList.length - 1)))}
         </View>
         <Button
           onPress={() => this.navigator.pop()}
-          // backgroundColors={['#6A6AD5', '#6F86D9']}
           title="返回编辑"
           style={styles.goback}
         >
         </Button>
         <Button
-          onPress={
-            () => {
-              // this.navigator.push({view: <TravelMain />})
-            }
-          }
-          // backgroundColors={['#4DC7A4', '#66D37A']}
+          onPress={this.complete}
           title="完成创建"
           style={styles.complete}
         >
@@ -197,15 +220,15 @@ const styles = StyleSheet.create({
   goback: {
     width: 100,
     position: 'absolute',
-    bottom:20,
-    left:20,
+    bottom: 20,
+    left: 20,
     zIndex: 99999
   },
   complete: {
     width: 100,
     position: 'absolute',
-    bottom:20,
-    right:20,
+    bottom: 20,
+    right: 20,
     zIndex: 99999
   }
 });

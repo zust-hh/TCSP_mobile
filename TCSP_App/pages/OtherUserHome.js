@@ -12,7 +12,7 @@ import {
 import MyCollection from './MyCollection';
 import MyFocus from './MyFocus';
 import MyItinerary from './MyItinerary';
-import { BasePage, NavigationBar,TeaNavigator } from 'teaset';
+import { BasePage, NavigationBar, TeaNavigator } from 'teaset';
 var width = Dimensions.get('window').width;
 export default class OtherUserHome extends BasePage {
   static defaultProps = {
@@ -21,21 +21,35 @@ export default class OtherUserHome extends BasePage {
   constructor(props) {
     super(props);
     this.state = {
-      UserName: '',
-
+      username: '',
+      userid: '',
     }
   }
   componentWillMount() {
-
+    let uri = 'http://192.168.1.113:8080/account/' + this.props.id + '/basicInfo';
+    fetch(uri, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include'
+    })
+      .then((response) => response.json())
+      .then((res) => {
+        this.setState({ username: res.userName });
+        this.setState({ userid: res.id });
+      })
+      .done();
   }
   render() {
     return (
-      <View style={{ flex: 1 ,backgroundColor:'#eee'}}>
+      <View style={{ flex: 1, backgroundColor: '#eee' }}>
         <NavigationBar
           style={{ backgroundColor: 'rgb(65, 192, 115)' }}
           type='ios'
           tintColor='#fff'
-          title={this.state.UserName + '的个人空间'}
+          title={this.state.userName + '的个人空间'}
           leftView={<NavigationBar.BackButton title='Back'
             onPress={() => this.navigator.pop()
             } />}
@@ -45,20 +59,20 @@ export default class OtherUserHome extends BasePage {
           <View style={styles.userinfo}>
             <Image style={{ width: 70, height: 70, borderRadius: 35 }} source={require('../public/images/boy.png')} />
             <Text style={{ fontSize: 18, color: '#fff', marginTop: 25, fontWeight: 'bold' }}>
-              Zust_lxz
+              {this.state.username}
             </Text>
           </View>
         </View>
         <View style={styles.usercontent}>
-          <TouchableOpacity style={styles.onecontent} activeOpacity={0.5} onPress={() => this.navigator.push({ view: <MyCollection /> })}>
+          <TouchableOpacity style={styles.onecontent} activeOpacity={0.5} onPress={() => this.navigator.push({ view: <MyCollection id={userid} /> })}>
             <Image style={{ width: 40, height: 40, marginBottom: 10 }} source={require('../public/images/mysc.png')} />
             <Text>Ta的收藏</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.onecontent} activeOpacity={0.5} onPress={() => this.navigator.push({ view: <MyFocus /> })}>
+          <TouchableOpacity style={styles.onecontent} activeOpacity={0.5} onPress={() => this.navigator.push({ view: <MyFocus id={userid} /> })}>
             <Image style={{ width: 40, height: 40, marginBottom: 10 }} source={require('../public/images/mygz.png')} />
             <Text>Ta的关注</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.onecontent} activeOpacity={0.5} onPress={() => this.navigator.push({ view: <MyItinerary /> })}>
+          <TouchableOpacity style={styles.onecontent} activeOpacity={0.5} onPress={() => this.navigator.push({ view: <MyItinerary id={userid} /> })}>
             <Image style={{ width: 40, height: 40, marginBottom: 10 }} source={require('../public/images/myxc.png')} />
             <Text>Ta的行程</Text>
           </TouchableOpacity>

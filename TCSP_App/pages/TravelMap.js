@@ -22,7 +22,7 @@ export default class TravelMap extends Component {
   componentWillMount() {
     let linecount = [];
     for (let i = 0; i < this.props.pointList.length - 1; i = i + 1) {
-      let line = [this.props.pointList[i].pointLati, this.props.pointList[i].pointLongi, this.props.pointList[i + 1].pointLati, this.props.pointList[i + 1].pointLongi];
+      let line = [this.props.pointList[i].latitude, this.props.pointList[i].longitude, this.props.pointList[i + 1].latitude, this.props.pointList[i + 1].longitude];
       linecount.push(line);
     }
     this.setState({ linecount })
@@ -31,8 +31,8 @@ export default class TravelMap extends Component {
     return (
       <MapView style={StyleSheet.absoluteFill}
         coordinate={{
-          latitude: this.state.linecount[0][0],
-          longitude: this.state.linecount[0][1],
+          latitude: this.props.pointList[0].latitude,
+          longitude: this.props.pointList[0].longitude,
         }}
       >
         <NavigationBar
@@ -45,12 +45,12 @@ export default class TravelMap extends Component {
             } />}
         />
         {
-          this.state.pointList.map((onePoint, index) => {
-            onePointNum = JSON.parse(JSON.stringify(onePoint)).pointNum;
-            onePointName = JSON.parse(JSON.stringify(onePoint)).pointName;
-            onePointCity = JSON.parse(JSON.stringify(onePoint)).pointCity;
-            onePointLongi = JSON.parse(JSON.stringify(onePoint)).pointLongi;
-            onePointLati = JSON.parse(JSON.stringify(onePoint)).pointLati;
+          this.props.pointList.map((onePoint, index) => {
+            onePointNum = JSON.parse(JSON.stringify(onePoint)).index;
+            onePointName = JSON.parse(JSON.stringify(onePoint)).name;
+            // onePointCity = JSON.parse(JSON.stringify(onePoint)).pointCity;
+            onePointLongi = JSON.parse(JSON.stringify(onePoint)).longitude;
+            onePointLati = JSON.parse(JSON.stringify(onePoint)).latitude;
             let url = 'androidamap://route?did=BGVIS2&dlat=' + onePointLati + '&dlon=' + onePointLongi + '&dname=' + onePointName + '&dev=0&m=0&t=2';
             return (<Marker
               key={index}

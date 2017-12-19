@@ -8,11 +8,8 @@ import {
   Image
 } from 'react-native';
 import { MapView, HeatMap, Marker } from 'react-native-amap3d';
-import {TeaNavigator, BasePage} from 'teaset';
-// import { StackNavigator } from 'react-navigation';
+import { TeaNavigator, BasePage } from 'teaset';
 import ReleaseTraOne from './ReleaseTraOne';
-// import ReleaseTraTwo from './ReleaseTraTwo';
-// import TravelList from './TravelList';
 export default class Home extends BasePage {
   static defaultProps = {
     scene: TeaNavigator.SceneConfigs.PushFromRight,
@@ -22,46 +19,23 @@ export default class Home extends BasePage {
     this.state = {
       latitude: 39.91095,
       longitude: 116.37296,
+      heatpoint: [],
+      zoomlevel: 15
     }
   }
-  // static navigationOptions = {
-  //   header: false,
-  // }
-  // packJson = [{ "latitude": 39.5, "longitude": 116, "count": 8 }, { "latitude": 40.5, "longitude": 116, "count": 10 }];
   packJson = (new Array(50)).fill(0).map(i => ({
     latitude: 29.5 + (Math.random()),
     longitude: 119.5 + (Math.random()),
   }))
   _json = JSON.stringify(this.packJson);
   _coordinates = JSON.parse(this._json);
-
-  // _getLocation = () => {
-  //   navigator.geolocation.getCurrentPosition(
-  //     (position) => {
-  //       let initialPosition = JSON.stringify(position);
-  //       let locations = JSON.parse(initialPosition);
-  //       AsyncStorage.setItem('location', locations);
-  //       // alert(locations.coords.longitude);
-  //       this.setState({ latitude: locations.coords.latitude });
-  //       this.setState({ longitude: locations.coords.longitude });
-  //       // alert(this.state.latitude);
-  //     },
-  //     (error) => console.log(new Date() + JSON.stringify(error)),
-  //     { enableHighAccuracy: true, timeout: 5000, maximumAge: 3000 }
-  //   );
-  // }
-
-  // componentWillMount() {
-  //   this._getLocation();
-  // }
-
   render() {
     return (
       <View style={styles.body}>
         <MapView
           showsBuildings={false}
           locationEnabled={true}
-          zoomLevel={15}
+          zoomLevel={this.state.zoomlevel}
           style={StyleSheet.absoluteFill}
           showsZoomControls={false}
           showsLocationButton={true}
@@ -69,6 +43,25 @@ export default class Home extends BasePage {
           onLocation={({ nativeEvent }) => {
             this.setState({ latitude: nativeEvent.latitude });
             this.setState({ longitude: nativeEvent.longitude });
+            let uri = 'http://192.168.1.113:8080/map/getRoutepointListByPosition/latitude/'+nativeEvent.latitude+'/longitude/'+nativeEvent.longitude+'/radius/'+this.state.zoomlevel;
+            fetch(uri, {
+              method: 'POST',
+              headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+              },
+              credentials: 'include'
+            })
+              .then((response) => response.json())
+              .then((res) => {
+                let heatpoint = [];
+                for(let i = 0;i<res.length;i++){
+                  let one = [res[i].latitude,res[i].longitude];
+                  heatpoint.push(one);
+                }
+                this.setState({ heatpoint });
+              })
+              .done();
           }}
 
           coordinate={{
@@ -79,10 +72,10 @@ export default class Home extends BasePage {
           <HeatMap
             opacity={0.8}
             radius={20}
-            coordinates={this._coordinates} />
+            coordinates={this.state.heatpoint} />
         </MapView>
         <View style={styles.button}>
-          <TouchableHighlight onPress={() => this.navigator.push({view: <ReleaseTraOne />})} style={styles.btn} activeOpacity={0.7} underlayColor='rgb(53,122,232)'>
+          <TouchableHighlight onPress={() => this.navigator.push({ view: <ReleaseTraOne /> })} style={styles.btn} activeOpacity={0.7} underlayColor='rgb(53,122,232)'>
             <Image style={{ width: 16, height: 16, }} source={require('../public/images/plus.png')} />
           </TouchableHighlight>
         </View>
@@ -90,14 +83,6 @@ export default class Home extends BasePage {
     );
   }
 }
-
-// export default SimpleApp = StackNavigator({
-//   Home: { screen: Home },
-//   ReleaseTraOne: { screen: ReleaseTraOne },
-//   ReleaseTraTwo: { screen: ReleaseTraTwo },
-//   TravelList: { screen: TravelList },
-
-// });
 
 const styles = StyleSheet.create({
   body: {

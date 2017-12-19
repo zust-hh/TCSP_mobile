@@ -42,18 +42,8 @@ export default class ReleaseTraTwo extends BasePage {
   static defaultProps = ({
     scene: TeaNavigator.SceneConfigs.PushFromRight,
   });
-  // static navigationOptions = ({ navigation }) => ({
-  //   title: `${navigation.state.params.start}`,
-  //   headerRight: <TouchableOpacity style={styles.menubtn} onPress={navigation.state.params.navigatePress}>
-  //     <Image source={require('../public/images/menu.png')} />
-  //     <Badge type='capsule' count={navigation.state.params.pointNum} />
-  //   </TouchableOpacity>,
-  //   headerStyle: { elevation: 0 },
-  // });
   //首次加载之前
   componentWillMount() {
-    // let startName = JSON.stringify(this.props.start);
-    // let start = JSON.parse(startName);
     let geouri = 'http://restapi.amap.com/v3/geocode/geo?key=a12fe0a773225a0edbb395bce289a441&address=' + this.props.start;
     fetch(geouri)
       .then((response) => {
@@ -107,9 +97,7 @@ export default class ReleaseTraTwo extends BasePage {
         let searchArray = JSON.parse(JSON.stringify(data)).tips;
         searchArray = searchArray.slice(0, 3);
         this.setState({ listShow: true });
-        this.setState({ searchArray }, () => {
-          // alert(this.state.searchArray.length);
-        });
+        this.setState({ searchArray });
 
       })
       .catch((err) => {
@@ -117,8 +105,13 @@ export default class ReleaseTraTwo extends BasePage {
       });
   }
   endEdit() {
-    // this.props.navigation.navigate('TravelList',{state:1,pointList:this.state.pointList});
-    this.navigator.push({ view: <TravelList state={1} pointList={this.state.pointList} />})
+    if (pointList != []) {
+      this.navigator.push({ view: <TravelList pointList={this.state.pointList} title={this.props.title} /> })
+    }
+    else {
+      alert('最少添加一个路径点');
+    }
+
   }
   //右侧弹出抽屉View
   pointListView() {
@@ -150,19 +143,14 @@ export default class ReleaseTraTwo extends BasePage {
               }
             </View>
         }
-        {/* <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-          <Label type='detail' size='xl' text='Drawer' />
-        </View> */}
       </View>
     )
   }
   render() {
-    // let drawer = Drawer.show(pointListView, 'right');
-    // const { params } = this.props.navigation.state;
     return (
       <View style={styles.note}>
         <NavigationBar
-          style={{ backgroundColor: 'rgb(65, 192, 115)',zIndex:10000 }}
+          style={{ backgroundColor: 'rgb(65, 192, 115)', zIndex: 10000 }}
           type='ios'
           tintColor='#fff'
           title={this.props.title}
@@ -234,7 +222,6 @@ export default class ReleaseTraTwo extends BasePage {
                   let pointArray = JSON.parse(JSON.stringify(data2));
                   let FormatAdd = '';
                   let FormatCity = '';
-                  // alert(JSON.stringify(pointArray.regeocode));
                   if (pointArray.regeocode.aois[0] === undefined) {
                     FormatAdd = pointArray.regeocode.addressComponent.city + pointArray.regeocode.addressComponent.district + pointArray.regeocode.addressComponent.township + pointArray.regeocode.addressComponent.streetNumber.number;
                   } else {
@@ -262,14 +249,10 @@ export default class ReleaseTraTwo extends BasePage {
               latitude: this.state.Lati,
               longitude: this.state.Longi,
             }}>
-            {/* <View style={styles.customInfoWindow}>
-              <Text>{this.state.FormatAdd}</Text>
-            </View> */}
             <View>
               <View style={styles.customInfoWindow}>
                 <Text style={{ textAlign: 'center', }}>{this.state.FormatAdd}</Text>
               </View>
-              {/* <Label text={this.state.FormatAdd} /> */}
             </View>
           </Marker>
         </MapView>

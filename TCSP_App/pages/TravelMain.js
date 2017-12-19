@@ -12,7 +12,9 @@ import {
 } from 'react-native';
 import forge from 'node-forge';
 import ButtonComponent from 'react-native-button-component';
+import Admin from './Admin';
 import { TeaNavigator, BasePage, NavigationBar } from 'teaset';
+import TravelMap from './TravelMap';
 var { height, width } = Dimensions.get('window');
 export default class TravelMain extends BasePage {
   static defaultProps = ({
@@ -49,11 +51,30 @@ export default class TravelMain extends BasePage {
       dataSource: new ListView.DataSource({
         rowHasChanged: (row1, row2) => row1 !== row2,
       }),
-      pointEn: []
+      pointEn: [],
+      status: false,
+
     }
   }
-  componentDidMount() {
-    this.state.pointList = this.props.pointList;
+  componentWillMount() {
+    let uri = 'http://192.168.1.113:8080/route/' + this.props.id + '/info';
+    fetch(uri, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include'
+    })
+      .then((response) => response.json())
+      .then((res) => {
+        this.setState({ pointList: res.routepointList });
+      })
+      .done();
+    if (this.props.status == 1) {
+      this.setState({ status: true });
+    }
+
   }
   //进行渲染数据
   renderContent(dataSource) {
@@ -164,19 +185,14 @@ export default class TravelMain extends BasePage {
     return (
       <View style={{ marginLeft: 15, marginTop: 10 }}>
         <View style={{ flexDirection: 'row' }}>
-          <Text style={{ color: 'black', fontSize: 14, backgroundColor: '#00000000' }}>{data.pointName}</Text>
-          <View style={{ flex: 1, alignItems: 'flex-end', marginRight: 10 }}><Text style={{ color: '#777', fontSize: 12, backgroundColor: '#00000000' }}>{data.pointCity}</Text></View>
+          <Text style={{ color: 'black', fontSize: 14, backgroundColor: '#00000000' }}>{data.name}</Text>
+          <View style={{ flex: 1, alignItems: 'flex-end', marginRight: 10 }}><Text style={{ color: '#777', fontSize: 12, backgroundColor: '#00000000' }}>{data.longitude}</Text></View>
         </View>
         <Text style={{ color: '#777', fontSize: 12, marginTop: 10, backgroundColor: '#00000000' }}>this.</Text>
       </View>
     );
   }
-  // componentWillMount() {
-  //   var pointList = JSON.parse(JSON.stringify(this.props.navigation)).state.params.pointList;
-  //   this.setState({ pointList });
-  // }
   render() {
-    const { navigate } = this.props.navigation;
     return (
       <View style={{ flex: 1 }}>
         <NavigationBar
@@ -184,11 +200,17 @@ export default class TravelMain extends BasePage {
           type='ios'
           tintColor='#fff'
           title={this.state.travelName}
-          leftView={<NavigationBar.BackButton title='Back'
-            onPress={() => this.navigator.pop()
-            } />}
+          leftView={
+            //等于0说明是从用户中心等地跳转，其他说明为创建时跳转
+            this.state.status ?
+              <NavigationBar.BackButton title='Back'
+                onPress={() => this.navigator.pop()
+                } /> :
+              <NavigationBar.BackButton title='Back'
+                onPress={() => this.navigator.push({ view: <Admin /> })
+                } />}
           rightView={
-            <TouchableOpacity style={styles.menubtn} onPress={() => this.navigator.push({view: <TravelMap pointList={this.state.pointList}/>})}>
+            <TouchableOpacity style={styles.menubtn} onPress={() => this.navigator.push({ view: <TravelMap pointList={this.state.pointList} /> })}>
               <Image source={require('../public/images/map.png')} style={{ width: 27, height: 27 }} />
             </TouchableOpacity>
           }
@@ -213,6 +235,7 @@ const styles = StyleSheet.create({
   travelhead: {
     width: width,
     height: 160,
+    marginTop: 44
   },
   complete: {
     width: 100,

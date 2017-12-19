@@ -22,6 +22,39 @@ export default class MyCollection extends NavigationPage {
       collectionList: []
     }
   }
+  componentWillMount() {
+    if (this.props.id == undefined) {
+      fetch('http://192.168.1.113:8080/account/my/favoriteRoute', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include'
+      })
+        .then((response) => response.json())
+        .then((res) => {
+          this.setState({ collectionList: res });
+        })
+        .done();
+    }
+    else {
+      let uri = 'http://192.168.1.113:8080/account/'+this.props.id+'/favoriteRoute';
+      fetch(uri, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include'
+      })
+        .then((response) => response.json())
+        .then((res) => {
+          this.setState({ collectionList: res });
+        })
+        .done();
+    }
+  }
   render() {
     return (
       <View style={{ flex: 1, backgroundColor: '#eee' }}>
@@ -35,54 +68,24 @@ export default class MyCollection extends NavigationPage {
             } />}
         />
         <View style={{ marginTop: 44 }}>
-          {/* {
-          this.state.collectionList.map((onecollection, index) => {
-            return (
-              <TouchableOpacity style={styles.onecollection} activeOpacity={0.9} onPress={() => {
-                this.navigator.push({ view: <TravelMain /> });
-              }}>
-              <View style={styles.collectioncontent}>
-                <Image style={{ width: 50, height: 50 }} source={require('../public/images/image1.jpg')} />
-                <View style={{ marginLeft: 15 }}>
-                  <Text style={{ fontSize: 18, marginBottom: 5 }}>上海的美食之旅</Text>
-                  <Text style={{ fontSize: 12 }}>Zust_lxz</Text>
-                </View>
-                <Image style={{ width: 24, height: 24, position: 'absolute', top: 23, right: 0 }} source={require('../public/images/right.png')} />
-              </View>
-            </TouchableOpacity>
-            )
-          })
-        } */}
-          <TouchableOpacity style={styles.onecollection} activeOpacity={0.9}>
-            <View style={styles.collectioncontent}>
-              <Image style={{ width: 50, height: 50 }} source={require('../public/images/image1.jpg')} />
-              <View style={{ marginLeft: 15 }}>
-                <Text style={{ fontSize: 18, marginBottom: 5 }}>上海的美食之旅</Text>
-                <Text style={{ fontSize: 12 }}>Zust_lxz</Text>
-              </View>
-              <Image style={{ width: 24, height: 24, position: 'absolute', top: 23, right: 0 }} source={require('../public/images/right.png')} />
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.onecollection} activeOpacity={0.9}>
-            <View style={styles.collectioncontent}>
-              <Image style={{ width: 50, height: 50 }} source={require('../public/images/image2.jpg')} />
-              <View style={{ marginLeft: 15 }}>
-                <Text style={{ fontSize: 18, marginBottom: 5 }}>上海的美食之旅</Text>
-                <Text style={{ fontSize: 12 }}>Zust_lxz</Text>
-              </View>
-              <Image style={{ width: 24, height: 24, position: 'absolute', top: 23, right: 0 }} source={require('../public/images/right.png')} />
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.onecollection} activeOpacity={0.9}>
-            <View style={styles.collectioncontent}>
-              <Image style={{ width: 50, height: 50 }} source={require('../public/images/image3.jpg')} />
-              <View style={{ marginLeft: 15 }}>
-                <Text style={{ fontSize: 18, marginBottom: 5 }}>上海的美食之旅</Text>
-                <Text style={{ fontSize: 12 }}>Zust_lxz</Text>
-              </View>
-              <Image style={{ width: 24, height: 24, position: 'absolute', top: 23, right: 0 }} source={require('../public/images/right.png')} />
-            </View>
-          </TouchableOpacity>
+          {
+            this.state.collectionList.map((onecollection, index) => {
+              return (
+                <TouchableOpacity style={styles.onecollection} key={index} activeOpacity={0.9} onPress={() => {
+                  this.navigator.push({ view: <TravelMain /> });
+                }}>
+                  <View style={styles.collectioncontent}>
+                    <Image style={{ width: 50, height: 50 }} source={require('../public/images/image1.jpg')} />
+                    <View style={{ marginLeft: 15 }}>
+                      <Text style={{ fontSize: 18, marginBottom: 5 }}>{onecollection.name}</Text>
+                      <Text style={{ fontSize: 12 }}>{onecollection.creatorName}</Text>
+                    </View>
+                    <Image style={{ width: 24, height: 24, position: 'absolute', top: 23, right: 0 }} source={require('../public/images/right.png')} />
+                  </View>
+                </TouchableOpacity>
+              )
+            })
+          }
         </View>
 
       </View>

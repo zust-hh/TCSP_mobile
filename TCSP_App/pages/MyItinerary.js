@@ -22,6 +22,24 @@ export default class MyItinerary extends BasePage {
       itineraryList: []
     }
   }
+  componentWillMount() {
+    if (this.props.id == undefined) {
+      let uri = 'http://192.168.1.113:8080/route/creatorId/' + this.props.userid;
+      fetch(uri, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include'
+      })
+        .then((response) => response.json())
+        .then((res) => {
+          this.setState({ itineraryList: res });
+        })
+        .done();
+    }
+  }
   render() {
     return (
       <View style={{ flex: 1, backgroundColor: '#eee' }}>
@@ -35,54 +53,24 @@ export default class MyItinerary extends BasePage {
             } />}
         />
         <View style={{ marginTop: 44 }}>
-          {/* {
-          this.state.itineraryList.map((oneitinerary, index) => {
-            return (
-              <TouchableOpacity style={styles.oneitinerary} activeOpacity={0.9} onPress={() => {
-                this.navigator.push({ view: <TravelMain /> });
-              }}>
-                <View style={styles.itinerarycontent}>
-                  <Image style={{ width: 50, height: 50 }} source={require('../public/images/image1.jpg')} />
-                  <View style={{ marginLeft: 15 }}>
-                    <Text style={{ fontSize: 18, marginBottom: 5 }}>上海的美食之旅</Text>
-                    <Text style={{ fontSize: 12 }}>发布日期：2017/12/06</Text>
+          {
+            this.state.itineraryList.map((oneitinerary, index) => {
+              return (
+                <TouchableOpacity style={styles.oneitinerary} key={index} activeOpacity={0.9} onPress={() => {
+                  this.navigator.push({ view: <TravelMain status={1} id={oneitinerary.id} /> });
+                }}>
+                  <View style={styles.itinerarycontent}>
+                    <Image style={{ width: 50, height: 50 }} source={require('../public/images/image1.jpg')} />
+                    <View style={{ marginLeft: 15 }}>
+                      <Text style={{ fontSize: 18, marginBottom: 5 }}>{oneitinerary.name}</Text>
+                      <Text style={{ fontSize: 12 }}>发布日期：{oneitinerary.time}</Text>
+                    </View>
+                    <Image style={{ width: 24, height: 24, position: 'absolute', top: 23, right: 0 }} source={require('../public/images/right.png')} />
                   </View>
-                  <Image style={{ width: 24, height: 24, position: 'absolute', top: 23, right: 0 }} source={require('../public/images/right.png')} />
-                </View>
-              </TouchableOpacity>
-            )
-          })
-        } */}
-          <TouchableOpacity style={styles.oneitinerary} activeOpacity={0.9}>
-            <View style={styles.itinerarycontent}>
-              <Image style={{ width: 50, height: 50 }} source={require('../public/images/image1.jpg')} />
-              <View style={{ marginLeft: 15 }}>
-                <Text style={{ fontSize: 18, marginBottom: 5 }}>上海的美食之旅</Text>
-                <Text style={{ fontSize: 12 }}>发布日期：2017/12/06</Text>
-              </View>
-              <Image style={{ width: 24, height: 24, position: 'absolute', top: 23, right: 0 }} source={require('../public/images/right.png')} />
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.oneitinerary} activeOpacity={0.9}>
-            <View style={styles.itinerarycontent}>
-              <Image style={{ width: 50, height: 50 }} source={require('../public/images/image2.jpg')} />
-              <View style={{ marginLeft: 15 }}>
-                <Text style={{ fontSize: 18, marginBottom: 5 }}>上海的美食之旅</Text>
-                <Text style={{ fontSize: 12 }}>发布日期：2017/12/06</Text>
-              </View>
-              <Image style={{ width: 24, height: 24, position: 'absolute', top: 23, right: 0 }} source={require('../public/images/right.png')} />
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.oneitinerary} activeOpacity={0.9}>
-            <View style={styles.itinerarycontent}>
-              <Image style={{ width: 50, height: 50 }} source={require('../public/images/image3.jpg')} />
-              <View style={{ marginLeft: 15 }}>
-                <Text style={{ fontSize: 18, marginBottom: 5 }}>上海的美食之旅</Text>
-                <Text style={{ fontSize: 12 }}>发布日期：2017/12/06</Text>
-              </View>
-              <Image style={{ width: 24, height: 24, position: 'absolute', top: 23, right: 0 }} source={require('../public/images/right.png')} />
-            </View>
-          </TouchableOpacity>
+                </TouchableOpacity>
+              )
+            })
+          }
         </View>
       </View>
     );

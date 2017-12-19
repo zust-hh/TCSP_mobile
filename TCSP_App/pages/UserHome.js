@@ -13,7 +13,7 @@ import MyCollection from './MyCollection';
 import MyFocus from './MyFocus';
 import MyItinerary from './MyItinerary';
 // import OtherUserHome from './OtherUserHome';
-import { BasePage, NavigationBar,TeaNavigator } from 'teaset';
+import { BasePage, NavigationBar, TeaNavigator } from 'teaset';
 var width = Dimensions.get('window').width;
 export default class UserHome extends BasePage {
   static defaultProps = {
@@ -22,21 +22,35 @@ export default class UserHome extends BasePage {
   constructor(props) {
     super(props);
     this.state = {
-
+      username: '',
+      userid:'',
     }
   }
   componentWillMount() {
-
+    fetch('http://192.168.1.113:8080/account/getUserInfoByTokenInCookie', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include'
+    })
+      .then((response) => response.json())
+      .then((res) => {
+        this.setState({username:res.userName});
+        this.setState({userid:res.id});
+      })
+      .done();
   }
   render() {
     return (
-      <View style={{ flex: 1,backgroundColor:'#eee' }}>
+      <View style={{ flex: 1, backgroundColor: '#eee' }}>
         <View style={styles.userhead}>
           <Image style={{ width: width, height: 198, position: 'absolute', top: 0, left: 0 }} source={require('../public/images/userheadimg.jpg')} />
           <View style={styles.userinfo}>
             <Image style={{ width: 70, height: 70, borderRadius: 35 }} source={require('../public/images/boy.png')} />
             <Text style={{ fontSize: 18, color: '#fff', marginTop: 25, fontWeight: 'bold' }}>
-              Zust_lxz
+              {this.state.username}
             </Text>
           </View>
         </View>
@@ -49,7 +63,7 @@ export default class UserHome extends BasePage {
             <Image style={{ width: 40, height: 40, marginBottom: 10 }} source={require('../public/images/mygz.png')} />
             <Text>我的关注</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.onecontent} activeOpacity={0.5} onPress={() => this.navigator.push({ view: <MyItinerary /> })}>
+          <TouchableOpacity style={styles.onecontent} activeOpacity={0.5} onPress={() => this.navigator.push({ view: <MyItinerary userid={this.state.userid}/> })}>
             <Image style={{ width: 40, height: 40, marginBottom: 10 }} source={require('../public/images/myxc.png')} />
             <Text>我的行程</Text>
           </TouchableOpacity>
