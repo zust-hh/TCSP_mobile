@@ -98,20 +98,18 @@ export default class ReleaseTraTwo extends BasePage {
         searchArray = searchArray.slice(0, 3);
         this.setState({ listShow: true });
         this.setState({ searchArray });
-
       })
       .catch((err) => {
         console.error(err)
       });
   }
   endEdit() {
-    if (pointList != []) {
-      this.navigator.push({ view: <TravelList pointList={this.state.pointList} title={this.props.title} /> })
+    if (this.state.pointList != []) {
+      this.navigator.push({ view: <TravelList pointList={this.state.pointList} title={this.props.title} photouri={this.props.photouri}/> })
     }
     else {
       alert('最少添加一个路径点');
     }
-
   }
   //右侧弹出抽屉View
   pointListView() {

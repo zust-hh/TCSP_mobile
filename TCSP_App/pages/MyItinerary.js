@@ -35,6 +35,47 @@ export default class MyItinerary extends BasePage {
       })
         .then((response) => response.json())
         .then((res) => {
+          let itineraryList = [];
+          let Y = '';
+          let M = '';
+          let D = '';
+          let h = '';
+          let m = '';
+          let s = '';
+          for (let i = 0; i < res.length; i++) {
+            let time = new Date(res[i].time);
+            Y = time.getFullYear() + '-';
+            M = (time.getMonth() + 1 < 10 ? '0' + (time.getMonth() + 1) : time.getMonth() + 1) + '-';
+            D = time.getDate() + ' ';
+            h = time.getHours() + ':';
+            m = time.getMinutes() + ':';
+            s = time.getSeconds();
+            let one = {
+              id: res[i].id,
+              name: res[i].name,
+              time: Y + M + D + h + m + s,
+              cover:res[i].coverPic
+            }
+            itineraryList.push(one);
+          }
+          this.setState({ itineraryList },()=> {
+            // alert(JSON.stringify(this.state.itineraryList));
+          });
+        })
+        .done();
+    }
+    else {
+      let uri = 'http://192.168.1.113:8080/route/creatorId/' + this.props.id;
+      fetch(uri, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include'
+      })
+        .then((response) => response.json())
+        .then((res) => {
           this.setState({ itineraryList: res });
         })
         .done();
@@ -55,12 +96,13 @@ export default class MyItinerary extends BasePage {
         <View style={{ marginTop: 44 }}>
           {
             this.state.itineraryList.map((oneitinerary, index) => {
+              let cover = 'http://192.168.1.113:8080/uploads/cover/'+oneitinerary.cover;
               return (
                 <TouchableOpacity style={styles.oneitinerary} key={index} activeOpacity={0.9} onPress={() => {
                   this.navigator.push({ view: <TravelMain status={1} id={oneitinerary.id} /> });
                 }}>
                   <View style={styles.itinerarycontent}>
-                    <Image style={{ width: 50, height: 50 }} source={require('../public/images/image1.jpg')} />
+                    <Image style={{ width: 50, height: 50 }} source={{uri: cover}} />
                     <View style={{ marginLeft: 15 }}>
                       <Text style={{ fontSize: 18, marginBottom: 5 }}>{oneitinerary.name}</Text>
                       <Text style={{ fontSize: 12 }}>发布日期：{oneitinerary.time}</Text>

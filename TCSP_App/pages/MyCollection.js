@@ -72,7 +72,7 @@ export default class MyCollection extends NavigationPage {
             this.state.collectionList.map((onecollection, index) => {
               return (
                 <TouchableOpacity style={styles.onecollection} key={index} activeOpacity={0.9} onPress={() => {
-                  this.navigator.push({ view: <TravelMain /> });
+                  this.navigator.push({ view: <TravelMain id={onecollection.id}/> });
                 }}>
                   <View style={styles.collectioncontent}>
                     <Image style={{ width: 50, height: 50 }} source={require('../public/images/image1.jpg')} />

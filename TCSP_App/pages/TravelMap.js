@@ -12,13 +12,16 @@ import {
 } from 'react-native';
 import { MapView, Polyline, Marker } from 'react-native-amap3d';
 import { Badge, BasePage, NavigationBar, TeaNavigator } from 'teaset';
-export default class TravelMap extends Component {
+export default class TravelMap extends BasePage {
   constructor(props) {
     super(props);
     this.state = {
       linecount: []
     }
   }
+  static defaultProps = ({
+    scene: TeaNavigator.SceneConfigs.PushFromRight,
+  });
   componentWillMount() {
     let linecount = [];
     for (let i = 0; i < this.props.pointList.length - 1; i = i + 1) {
@@ -29,88 +32,104 @@ export default class TravelMap extends Component {
   }
   render() {
     return (
-      <MapView style={StyleSheet.absoluteFill}
-        coordinate={{
-          latitude: this.props.pointList[0].latitude,
-          longitude: this.props.pointList[0].longitude,
-        }}
-      >
+      <View style={{flex:1}}>
         <NavigationBar
           style={{ backgroundColor: 'rgb(65, 192, 115)' }}
           type='ios'
           tintColor='#fff'
-          title='行程地图'
+          title={'地图'}
           leftView={<NavigationBar.BackButton title='Back'
             onPress={() => this.navigator.pop()
             } />}
         />
-        {
-          this.props.pointList.map((onePoint, index) => {
-            onePointNum = JSON.parse(JSON.stringify(onePoint)).index;
-            onePointName = JSON.parse(JSON.stringify(onePoint)).name;
-            // onePointCity = JSON.parse(JSON.stringify(onePoint)).pointCity;
-            onePointLongi = JSON.parse(JSON.stringify(onePoint)).longitude;
-            onePointLati = JSON.parse(JSON.stringify(onePoint)).latitude;
-            let url = 'androidamap://route?did=BGVIS2&dlat=' + onePointLati + '&dlon=' + onePointLongi + '&dname=' + onePointName + '&dev=0&m=0&t=2';
-            return (<Marker
-              key={index}
-              draggable={false}
-              icon={() => (
-                <View style={styles.customMarker}>
-                  <Badge style={{ backgroundColor: '#5bc0de', paddingLeft: 0, paddingRight: 0 }}>
-                    <Text style={{ color: '#fff' }}>{index + 1}</Text>
-                  </Badge>
-                </View>
-              )}
-              coordinate={{
-                latitude: onePointLati,
-                longitude: onePointLongi,
-              }}>
-              <View style={styles.customInfoWindow}>
-                <View style={{ width: 230, paddingLeft: 15, paddingTop: 10 }}>
-                  <Text style={{ fontSize: 16 }}>{onePointName}</Text>
-                </View>
-                <TouchableOpacity style={{ width: 100, paddingTop: 4 }} activeOpacity={0.8} onPress={() => {
-                  Linking.canOpenURL(url).then(supported => {
-                    if (supported) {
-                      Linking.openURL(url);
-                    } else {
-                      console.log('无法打开该URI: ' + this.props.url);
-                    }
-                  })
+        <MapView style={styles.absoluteFill}
+          coordinate={{
+            latitude: this.props.pointList[0].latitude,
+            longitude: this.props.pointList[0].longitude,
+          }}
+          zoomLevel={13}
+        >
+          <NavigationBar
+            style={{ backgroundColor: 'rgb(65, 192, 115)' }}
+            type='ios'
+            tintColor='#fff'
+            title='行程地图'
+            leftView={<NavigationBar.BackButton title='Back'
+              onPress={() => this.navigator.pop()
+              } />}
+          />
+          {
+            this.props.pointList.map((onePoint, index) => {
+              onePointNum = JSON.parse(JSON.stringify(onePoint)).index;
+              onePointName = JSON.parse(JSON.stringify(onePoint)).name;
+              // onePointCity = JSON.parse(JSON.stringify(onePoint)).pointCity;
+              onePointLongi = JSON.parse(JSON.stringify(onePoint)).longitude;
+              onePointLati = JSON.parse(JSON.stringify(onePoint)).latitude;
+              let url = 'androidamap://route?did=BGVIS2&dlat=' + onePointLati + '&dlon=' + onePointLongi + '&dname=' + onePointName + '&dev=0&m=0&t=2';
+              return (<Marker
+                key={index}
+                draggable={false}
+                icon={() => (
+                  <View style={styles.customMarker}>
+                    <Badge style={{ backgroundColor: '#5bc0de', paddingLeft: 0, paddingRight: 0 }}>
+                      <Text style={{ color: '#fff' }}>{index + 1}</Text>
+                    </Badge>
+                  </View>
+                )}
+                coordinate={{
+                  latitude: onePointLati,
+                  longitude: onePointLongi,
                 }}>
-                  <Image source={require('../public/images/mappointright.png')} style={{ width: 65, height: 60 }} />
-                </TouchableOpacity>
-              </View>
-            </Marker>);
-          })
-        }
-        {
-          this.state.linecount.map((onePoint, index) => {
-            return (<Polyline
-              key={index}
-              width={5}
-              color='rgba(255, 0, 0,0.5)'
-              coordinates={[
-                {
-                  latitude: onePoint[0],
-                  longitude: onePoint[1],
-                },
-                {
-                  latitude: onePoint[2],
-                  longitude: onePoint[3],
-                },
-              ]} />);
-          })
-        }
+                <View style={styles.customInfoWindow}>
+                  <View style={{ width: 230, paddingLeft: 15, paddingTop: 10 }}>
+                    <Text style={{ fontSize: 16 }}>{onePointName}</Text>
+                  </View>
+                  <TouchableOpacity style={{ width: 100, paddingTop: 4 }} activeOpacity={0.8} onPress={() => {
+                    Linking.canOpenURL(url).then(supported => {
+                      if (supported) {
+                        Linking.openURL(url);
+                      } else {
+                        console.log('无法打开该URI: ' + this.props.url);
+                      }
+                    })
+                  }}>
+                    <Image source={require('../public/images/mappointright.png')} style={{ width: 65, height: 60 }} />
+                  </TouchableOpacity>
+                </View>
+              </Marker>);
+            })
+          }
+          {
+            this.state.linecount.map((onePoint, index) => {
+              return (<Polyline
+                key={index}
+                width={5}
+                color='rgba(255, 0, 0,0.5)'
+                coordinates={[
+                  {
+                    latitude: onePoint[0],
+                    longitude: onePoint[1],
+                  },
+                  {
+                    latitude: onePoint[2],
+                    longitude: onePoint[3],
+                  },
+                ]} />);
+            })
+          }
 
 
-      </MapView>
+        </MapView>
+      </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  absoluteFill: {
+    marginTop: 44,
+    flex: 1,
+  },
   markerText: {
     color: '#fff',
     width: 30,

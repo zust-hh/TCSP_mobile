@@ -49,7 +49,7 @@ export default class OtherUserHome extends BasePage {
           style={{ backgroundColor: 'rgb(65, 192, 115)' }}
           type='ios'
           tintColor='#fff'
-          title={this.state.userName + '的个人空间'}
+          title={this.state.username + '的个人空间'}
           leftView={<NavigationBar.BackButton title='Back'
             onPress={() => this.navigator.pop()
             } />}
@@ -64,15 +64,15 @@ export default class OtherUserHome extends BasePage {
           </View>
         </View>
         <View style={styles.usercontent}>
-          <TouchableOpacity style={styles.onecontent} activeOpacity={0.5} onPress={() => this.navigator.push({ view: <MyCollection id={userid} /> })}>
+          <TouchableOpacity style={styles.onecontent} activeOpacity={0.5} onPress={() => this.navigator.push({ view: <MyCollection id={this.state.userid} /> })}>
             <Image style={{ width: 40, height: 40, marginBottom: 10 }} source={require('../public/images/mysc.png')} />
             <Text>Ta的收藏</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.onecontent} activeOpacity={0.5} onPress={() => this.navigator.push({ view: <MyFocus id={userid} /> })}>
+          <TouchableOpacity style={styles.onecontent} activeOpacity={0.5} onPress={() => this.navigator.push({ view: <MyFocus id={this.state.userid} /> })}>
             <Image style={{ width: 40, height: 40, marginBottom: 10 }} source={require('../public/images/mygz.png')} />
             <Text>Ta的关注</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.onecontent} activeOpacity={0.5} onPress={() => this.navigator.push({ view: <MyItinerary id={userid} /> })}>
+          <TouchableOpacity style={styles.onecontent} activeOpacity={0.5} onPress={() => this.navigator.push({ view: <MyItinerary id={this.state.userid} /> })}>
             <Image style={{ width: 40, height: 40, marginBottom: 10 }} source={require('../public/images/myxc.png')} />
             <Text>Ta的行程</Text>
           </TouchableOpacity>
@@ -84,6 +84,7 @@ export default class OtherUserHome extends BasePage {
 
 const styles = StyleSheet.create({
   userhead: {
+    marginTop: 44,
     width: width,
     height: 200,
     justifyContent: 'center',

@@ -17,26 +17,25 @@ export default class Admin extends BasePage {
   };
   render() {
     return (
-      <TabView style={{ flex: 1 }} type='projector'>
+      <TabView style={{ flex: 1 }} type='projector' oncChange={index=>index==1&&this.refs.find&&this.refs.find.fetchfc()}>
         <TabView.Sheet
           title='首页'
           icon={require('../public/images/home.png')}
           activeIcon={require('../public/images/home_active.png')}
         >
-          <Home />
+          <Home/>
         </TabView.Sheet>
         <TabView.Sheet
           title='发现'
           icon={require('../public/images/chart.png')}
           activeIcon={require('../public/images/chart_active.png')}
         >
-          <FindHome />
+          <FindHome ref='find'/>
         </TabView.Sheet>
         <TabView.Sheet
           title='我的'
           icon={require('../public/images/me.png')}
           activeIcon={require('../public/images/me_active.png')}
-          badge={1}
         >
           <UserHome />
         </TabView.Sheet>

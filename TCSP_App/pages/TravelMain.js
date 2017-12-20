@@ -53,7 +53,6 @@ export default class TravelMain extends BasePage {
       }),
       pointEn: [],
       status: false,
-
     }
   }
   componentWillMount() {
@@ -71,8 +70,10 @@ export default class TravelMain extends BasePage {
         this.setState({ pointList: res.routepointList });
       })
       .done();
-    if (this.props.status == 1) {
-      this.setState({ status: true });
+    if (this.props.status) {
+      this.setState({ status: true },()=> {
+        this.state.status;
+      });
     }
 
   }
@@ -201,7 +202,6 @@ export default class TravelMain extends BasePage {
           tintColor='#fff'
           title={this.state.travelName}
           leftView={
-            //等于0说明是从用户中心等地跳转，其他说明为创建时跳转
             this.state.status ?
               <NavigationBar.BackButton title='Back'
                 onPress={() => this.navigator.pop()

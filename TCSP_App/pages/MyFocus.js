@@ -38,6 +38,22 @@ export default class MyFocus extends BasePage {
         })
         .done();
     }
+    else {
+      let uri = 'http://192.168.1.113:8080/account/' + this.props.id + '/concernList';
+      fetch(uri, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include'
+      })
+        .then((response) => response.json())
+        .then((res) => {
+          this.setState({ focusList: res });
+        })
+        .done();
+    }
   }
   render() {
     return (
@@ -57,7 +73,7 @@ export default class MyFocus extends BasePage {
               return (
                 <View style={styles.onefocus} key={index}>
                   <TouchableOpacity style={styles.onefocusleft} activeOpacity={0.9} onPress={() => {
-                    this.navigator.push({ view: <OtherUserHome /> });
+                    this.navigator.push({ view: <OtherUserHome id={this.props.userid}/> });
                   }}>
                     <View style={styles.focuscontent}>
                       <Image style={{ width: 50, height: 50 }} source={require('../public/images/boy.png')} />
@@ -79,7 +95,10 @@ export default class MyFocus extends BasePage {
                     })
                       .then((response) => response.json())
                       .then((res) => {
-
+                        if (res.status == 1) {
+                          let focusList = this.state.focusList.splice(index, 1);
+                          this.setState({ focusList });
+                        }
                       })
                       .done();
                   }}>

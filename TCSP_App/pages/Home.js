@@ -23,12 +23,14 @@ export default class Home extends BasePage {
       zoomlevel: 15
     }
   }
-  packJson = (new Array(50)).fill(0).map(i => ({
-    latitude: 29.5 + (Math.random()),
-    longitude: 119.5 + (Math.random()),
-  }))
+  // packJson = (new Array(50)).fill(0).map(i => ({
+  //   latitude: 29.5 + (Math.random()),
+  //   longitude: 119.5 + (Math.random()),
+  // }))
+  packJson = [{ "latitude": 39.5, "longitude": 116, "count": 8 }];
   _json = JSON.stringify(this.packJson);
   _coordinates = JSON.parse(this._json);
+
   render() {
     return (
       <View style={styles.body}>
@@ -43,7 +45,7 @@ export default class Home extends BasePage {
           onLocation={({ nativeEvent }) => {
             this.setState({ latitude: nativeEvent.latitude });
             this.setState({ longitude: nativeEvent.longitude });
-            let uri = 'http://192.168.1.113:8080/map/getRoutepointListByPosition/latitude/'+nativeEvent.latitude+'/longitude/'+nativeEvent.longitude+'/radius/'+this.state.zoomlevel;
+            let uri = 'http://192.168.1.113:8080/map/getRoutepointListByPosition/latitude/' + nativeEvent.latitude + '/longitude/' + nativeEvent.longitude + '/radius/' + this.state.zoomlevel;
             fetch(uri, {
               method: 'POST',
               headers: {
@@ -55,11 +57,18 @@ export default class Home extends BasePage {
               .then((response) => response.json())
               .then((res) => {
                 let heatpoint = [];
-                for(let i = 0;i<res.length;i++){
-                  let one = [res[i].latitude,res[i].longitude];
+                for (let i = 0; i < res.routepointList.length; i++) {
+                  let one = {
+                    latitude: res.routepointList[i].latitude,
+                    longitude: res.routepointList[i].longitude,
+                    score: res.routepointList[i].score
+                  };
                   heatpoint.push(one);
                 }
-                this.setState({ heatpoint });
+                heatpoint = JSON.parse(JSON.stringify(heatpoint));
+                this.setState({ heatpoint }, () => {
+                  // alert(this.state.heatpoint);
+                })
               })
               .done();
           }}
@@ -69,10 +78,19 @@ export default class Home extends BasePage {
             longitude: this.state.longitude,
           }}
         >
-          <HeatMap
-            opacity={0.8}
-            radius={20}
-            coordinates={this.state.heatpoint} />
+          {
+            this.state.heatpoint.length > 0 &&
+            this.state.heatpoint.map((oneheat, index) => {
+              return (
+                <HeatMap
+                  key={index}
+                  opacity={oneheat.score * 0.2}
+                  radius={20}
+                  coordinates={[oneheat]} />
+              )
+            })
+          }
+
         </MapView>
         <View style={styles.button}>
           <TouchableHighlight onPress={() => this.navigator.push({ view: <ReleaseTraOne /> })} style={styles.btn} activeOpacity={0.7} underlayColor='rgb(53,122,232)'>

@@ -22,7 +22,20 @@ export default class FindHome extends BasePage {
   static defaultProps = {
     scene: TeaNavigator.SceneConfigs.PushFromRight,
   };
-  componentWillMount() {
+  fetchfc() {
+    fetch('http://192.168.1.113:8080/route/suggest/latitude/39.91095/longitude/116.37296/radius/30', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include'
+    })
+      .then((response1) => response1.json())
+      .then((res1) => {
+        this.setState({ findRouterList: res1 });
+      })
+      .done();
     fetch('http://192.168.1.113:8080/suggestion/bigVList', {
       method: 'POST',
       headers: {
@@ -33,9 +46,14 @@ export default class FindHome extends BasePage {
     })
       .then((response) => response.json())
       .then((res) => {
-        this.setState({ findPeopleList: res });
+        this.setState({ findPeopleList: res },()=> {
+          alert(this.state.findPeopleList);
+        });
       })
       .done();
+  }
+  componentWillMount() {
+    this.fetchfc();
   }
   render() {
     return (
@@ -43,60 +61,24 @@ export default class FindHome extends BasePage {
         <SegmentedView.Sheet title='行程' titleStyle={styles.titletext} activeTitleStyle={styles.titletext}>
           <View style={{ flex: 1, alignItems: 'center', padding: 10 }}>
             <ScrollView>
-              {/* {
-                this.findRouterList.map((onefind,index) => {
+              {
+                this.state.findRouterList.map((onefind,index) => {
                   return (
-                    <TouchableOpacity style={styles.onetravel} activeOpacity={0.9} onPress={()=>{this.navigator.push({view: <TravelMain />})}}>
+                    <TouchableOpacity style={styles.onetravel} key={index} activeOpacity={0.9} onPress={()=>{this.navigator.push({view: <TravelMain status={1} id={onefind.id}/>})}}>
                     <Image style={{ width: Dimensions.get('window').width - 20, height: 210, borderRadius: 5 }} source={require('../public/images/image1.jpg')} />
                     <View style={styles.oneinfo}>
                       <View style={{ flexDirection: 'column' }}>
-                        <Text style={{ color: '#fff', fontSize: 24, marginBottom: 5 }}>上海的美食之旅</Text>
-                        <Text style={{ color: '#fff', marginLeft: 5, fontSize: 12 }}>出发地：上海市</Text>
+                        <Text style={{ color: '#fff', fontSize: 24, marginBottom: 5 }}>{onefind.name}</Text>
+                        {/* <Text style={{ color: '#fff', marginLeft: 5, fontSize: 12 }}>出发地：上海市</Text> */}
                       </View>
                       <View style={{ position: 'absolute', right: 20, top: 20 }}>
-                        <Text style={{ color: '#fff', fontSize: 16 }}>Zust_lxz</Text>
+                        <Text style={{ color: '#fff', fontSize: 16 }}>{onefind.creatorName}</Text>
                       </View>
                     </View>
                   </TouchableOpacity>
                   )
                 })
-              } */}
-              <TouchableOpacity style={styles.onetravel} activeOpacity={0.9}>
-                <Image style={{ width: Dimensions.get('window').width - 20, height: 210, borderRadius: 5 }} source={require('../public/images/image1.jpg')} />
-                <View style={styles.oneinfo}>
-                  <View style={{ flexDirection: 'column' }}>
-                    <Text style={{ color: '#fff', fontSize: 24, marginBottom: 5 }}>上海的美食之旅</Text>
-                    <Text style={{ color: '#fff', marginLeft: 5, fontSize: 12 }}>出发地：上海市</Text>
-                  </View>
-                  <View style={{ position: 'absolute', right: 20, top: 20 }}>
-                    <Text style={{ color: '#fff', fontSize: 16 }}>Zust_lxz</Text>
-                  </View>
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.onetravel} activeOpacity={0.9}>
-                <Image style={{ width: Dimensions.get('window').width - 20, height: 210, borderRadius: 5 }} source={require('../public/images/image2.jpg')} />
-                <View style={styles.oneinfo}>
-                  <View style={{ flexDirection: 'column' }}>
-                    <Text style={{ color: '#fff', fontSize: 24, marginBottom: 5 }}>北京的美食之旅</Text>
-                    <Text style={{ color: '#fff', marginLeft: 5, fontSize: 12 }}>出发地：北京市</Text>
-                  </View>
-                  <View style={{ position: 'absolute', right: 20, top: 20 }}>
-                    <Text style={{ color: '#fff', fontSize: 16 }}>Zust_lxz</Text>
-                  </View>
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.onetravel} activeOpacity={0.9}>
-                <Image style={{ width: Dimensions.get('window').width - 20, height: 210, borderRadius: 5 }} source={require('../public/images/image3.jpg')} />
-                <View style={styles.oneinfo}>
-                  <View style={{ flexDirection: 'column' }}>
-                    <Text style={{ color: '#fff', fontSize: 24, marginBottom: 5 }}>杭州的美食之旅</Text>
-                    <Text style={{ color: '#fff', marginLeft: 5, fontSize: 12 }}>出发地：杭州市</Text>
-                  </View>
-                  <View style={{ position: 'absolute', right: 20, top: 20 }}>
-                    <Text style={{ color: '#fff', fontSize: 16 }}>Zust_lxz</Text>
-                  </View>
-                </View>
-              </TouchableOpacity>
+              }
             </ScrollView>
           </View>
         </SegmentedView.Sheet>
@@ -106,7 +88,7 @@ export default class FindHome extends BasePage {
               {
                 this.state.findPeopleList.map((oneuser, index) => {
                   return (
-                    <TouchableOpacity style={styles.oneuser} key={index} activeOpacity={1} onPress={() => { this.navigator.push({ view: <OtherUserHome id={oneuser.id}/> }) }}>
+                    <TouchableOpacity style={styles.oneuser} key={index} activeOpacity={1} onPress={() => { this.navigator.push({ view: <OtherUserHome id={oneuser.id} /> }) }}>
                       <Image style={{ width: 48, height: 48, borderRadius: 24, marginRight: 15 }} source={require('../public/images/image2.jpg')} />
                       <View style={{ position: 'relative', flex: 1, justifyContent: 'center' }}>
                         <View style={{ flexDirection: 'column' }}>

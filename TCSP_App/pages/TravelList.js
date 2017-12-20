@@ -15,6 +15,7 @@ import forge from 'node-forge';
 import ButtonComponent from 'react-native-button-component';
 import TravelMain from './TravelMain';
 import { TeaNavigator, BasePage } from 'teaset';
+import RNFetchBlob from 'react-native-fetch-blob'
 var { height, width } = Dimensions.get('window');
 
 class TravelList extends BasePage {
@@ -159,31 +160,7 @@ class TravelList extends BasePage {
     this.setState({ pointList });
   }
   //完成创建
-  complete = () => {
-    fetch('', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        title: this.props.title,
-        routepointList: this.state.pointList
-      }),
-      credentials: 'include'
-    })
-      .then((response) => response.json())
-      .then((res) => {
-        if (res.status == 1) {
-          alert('创建成功');
-          this.navigator.push({ view: <TravelMain status={1}/> });
-        }
-        else {
-          alert(res.message);
-        }
-      })
-      .done();
-  }
+
   render() {
     return (
       <View style={{ flex: 1 }}>
@@ -201,12 +178,48 @@ class TravelList extends BasePage {
         >
         </Button>
         <Button
-          onPress={this.complete}
+          onPress={() => {
+            let routepointList = [];
+            for (let i = 0; i < this.props.pointList.length; i++) {
+              let one = {
+                "index": this.props.pointList[i].pointNum,
+                "name": this.props.pointList[i].pointName,
+                "latitude": this.props.pointList[i].pointLati,
+                "longitude": this.props.pointList[i].pointLongi,
+              };
+              routepointList.push(one);
+            }
+
+            let formdata = new FormData();
+            let uri = JSON.stringify(this.props.photouri.uri).substring(1, this.props.photouri.uri.length + 1);
+
+            let PATH = uri.replace('file:///', 'file://');// 运行试试  我感觉 不是这个问题。。嗯，没用，我觉得还是地址的问题，你能看下你的请求file是什么样的吗？就是这个图
+
+            let file = { uri: PATH, type: 'image/jpg', name: 'image.jpg' };
+            formdata.append('coverPic', file);
+            formdata.append('title', this.props.title);
+            formdata.append('routepointList', );
+
+            console.log(formdata);
+            RNFetchBlob.fetch('POST', 'http://192.168.1.113:8080/route/create', {
+            }, [
+                { name: 'coverPic', filename: 'a.jpg', type: 'image/jpg', data: RNFetchBlob.wrap(PATH) },
+                // elements without property `filename` will be sent as plain text
+                { name: 'title', data: this.props.title },
+                { name: 'routepointList', data: JSON.stringify(routepointList) },
+              ]).then((resp) => {
+                alert('创建成功' + resp.json().id);
+                this.navigator.push({ view: <TravelMain status={false} id={resp.json().id} /> });
+              }).catch((err) => {
+                alert(JSON.stringify(err));
+              })
+          }
+          }
           title="完成创建"
           style={styles.complete}
         >
         </Button>
-      </View>
+      </View >
     );
   }
 }
