@@ -32,7 +32,7 @@ export default class TravelMap extends BasePage {
   }
   render() {
     return (
-      <View style={{flex:1}}>
+      <View style={{ flex: 1 }}>
         <NavigationBar
           style={{ backgroundColor: 'rgb(65, 192, 115)' }}
           type='ios'

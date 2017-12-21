@@ -18,6 +18,8 @@ export default class ReleaseTraOne extends BasePage {
       valueCustom: '',
       startPoint: '',
       photouri: null,
+      Lati: 0,
+      Longi: 0,
     }
   }
   static defaultProps = {
@@ -25,7 +27,7 @@ export default class ReleaseTraOne extends BasePage {
   };
   gototwo = () => {
     if (this.state.valueCustom != '' && this.state.startPoint != '' && this.state.photouri != null) {
-      this.navigator.push({ view: <ReleaseTraTwo title={this.state.valueCustom} start={this.state.startPoint} photouri={this.state.photouri}/> })
+      this.navigator.push({ view: <ReleaseTraTwo title={this.state.valueCustom} lati={this.state.Lati} longi={this.state.Longi} photouri={this.state.photouri} /> })
     }
     else {
       alert('请先填写信息');
@@ -85,13 +87,30 @@ export default class ReleaseTraOne extends BasePage {
         />
         <TouchableOpacity style={styles.upload} activeOpcity={0.9} onPress={this.selectPhotoTapped.bind(this)}>
           {this.state.photouri === null ? <Image style={{ width: 60, height: 60, marginBottom: 25, marginTop: 45 }} source={require('../public/images/imgupload.png')} /> :
-            <Image style={{ width: 150, height: 150,  borderRadius: 15 }} source={this.state.photouri} />
+            <Image style={{ width: 150, height: 150, borderRadius: 15 }} source={this.state.photouri} />
           }
           <Text style={{ fontSize: 12 }}>封面图片</Text>
         </TouchableOpacity>
         <Input
           style={styles.input}
-          onChangeText={text => this.setState({ startPoint: text })}
+          onChangeText={text => this.setState({ startPoint: text }, () => {
+            let geouri = 'http://restapi.amap.com/v3/geocode/geo?key=a12fe0a773225a0edbb395bce289a441&address=' + this.state.startPoint;
+            fetch(geouri)
+              .then((response) => {
+                if (response.ok) {
+                  return response.json()
+                } else {
+                  console.error('服务器繁忙，请稍后再试；\r\nCode:' + response.status)
+                }
+              })
+              .then((data) => {
+                let startArray = JSON.parse(JSON.stringify(data)).geocodes[0].location.split(',');
+                this.setState({ Lati: parseFloat(startArray[1]), Longi: parseFloat(startArray[0]) });
+              })
+              .catch((err) => {
+                console.error(err)
+              });
+          })}
           placeholder="行程起点城市"
           placeholderTextColor='rgb(200,200,200)'
         />

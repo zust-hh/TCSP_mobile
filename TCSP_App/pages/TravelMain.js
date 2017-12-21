@@ -27,27 +27,7 @@ export default class TravelMain extends BasePage {
     this.renderFooterItem = this.renderFooterItem.bind(this);
     this.state = {
       travelName: '',
-      pointList: [{
-        pointNum: 1,
-        pointName: '上海的奇妙之旅1',
-        pointCity: '上海市',
-        pointLongi: 116.980724,
-        pointLati: 39.989584,
-      },
-      {
-        pointNum: 2,
-        pointName: '上海的奇妙之旅2',
-        pointCity: '上海市',
-        pointLongi: 115.480724,
-        pointLati: 39.989584,
-      },
-      {
-        pointNum: 3,
-        pointName: '上海的奇妙之旅3',
-        pointCity: '上海市',
-        pointLongi: 116.080724,
-        pointLati: 39.989584,
-      }],
+      pointList: [],
       dataSource: new ListView.DataSource({
         rowHasChanged: (row1, row2) => row1 !== row2,
       }),
