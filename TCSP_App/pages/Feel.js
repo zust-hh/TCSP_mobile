@@ -10,16 +10,16 @@ import {
   Dimensions,
 } from 'react-native';
 import { Rating, AirbnbRating } from 'react-native-ratings';
-import { TeaNavigator, NavigationBar, BasePage } from 'teaset';
+import { TeaNavigator, NavigationBar, BasePage, Toast } from 'teaset';
 var width = Dimensions.get('window').width;
-export default class Feel extends Component {
+export default class Feel extends BasePage {
   static defaultProps = {
     scene: TeaNavigator.SceneConfigs.PushFromRight,
   };
   constructor(props) {
     super(props);
     this.state = {
-
+      content: '',
     }
   }
   render() {
@@ -33,13 +33,37 @@ export default class Feel extends Component {
           leftView={<NavigationBar.BackButton title='Back'
             onPress={() => this.navigator.pop()
             } />}
-          rightView={<TouchableOpacity onPress={() => { }} activeOpacity={0.7} >
+          rightView={<TouchableOpacity onPress={() => {
+            let uri = ip+':8080/routepoint/' + this.props.id + '/feel/save';
+            fetch(uri, {
+              method: 'POST',
+              headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                content: this.state.content
+              }),
+              credentials: 'include'
+            })
+              .then((response) => response.json())
+              .then((res) => {
+                if (res.status == 1) {
+                  Toast.success('发表成功');
+                  this.navigator.pop();
+                }
+                else {
+                  console.error(res.message);
+                }
+              })
+              .done();
+          }} activeOpacity={0.7} >
             <Image source={require('../public/images/send.png')} style={{ width: 25, height: 25, marginRight: 15 }} />
           </TouchableOpacity>}
         />
         <TextInput
           style={styles.input}
-          // onChangeText={text => this.setState({ valueCustom: text })}
+          onChangeText={text => this.setState({ content: text })}
           placeholder="把你的感想分享一下吧"
           placeholderTextColor='rgb(200,200,200)'
           autoFocus={true}
@@ -58,7 +82,7 @@ const styles = StyleSheet.create({
     padding: 10
   },
   input: {
-    marginTop: 10,
+    marginTop: 54,
     width: 200,
     backgroundColor: 'white',
     color: 'black',

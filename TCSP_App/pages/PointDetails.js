@@ -14,7 +14,7 @@ import { Button, TeaNavigator, BasePage, NavigationBar } from 'teaset';
 import Comment from './Comment';
 import Feel from "./Feel";
 var width = Dimensions.get('window').width;
-export default class PointDetails extends Component {
+export default class PointDetails extends BasePage {
   static defaultProps = {
     scene: TeaNavigator.SceneConfigs.PushFromRight,
   };
@@ -23,30 +23,26 @@ export default class PointDetails extends Component {
     this.state = {
       scoreName: ['太糟了', '失望哦', '很一般', '还成吧', '极好的'],
       onePoint: {
-        name: '小和山风景区',
-        longitude: 120.3,
-        latitude: 30.2,
-        feel: '山清水秀，是个旅游的好地方山清水秀，是个旅游的好地方山清水秀，是个旅游的好地方山清水秀，是个旅游的好地方山清水秀，是个旅游的好地方山清水秀，是个旅游的好地方山清水秀，是个旅游的好地方山清水秀，是个旅游的好地方山清水秀，是个旅游的好地方',
-        commentNum: 3,
-        commentList: [{
-          userName: 'Zust_lxz',
-          content: '好地方',
-          time: '13465',
-          score: 3,
-        }, {
-          userName: 'Zust_lxz',
-          content: '好地方',
-          time: '132165',
-          score: 4,
-        }, {
-          userName: 'Zust_lxz',
-          content: '好地方',
-          time: '13213',
-          score: 5,
-        }
-        ]
+
       },
     }
+  }
+  componentDidMount() {
+    alert('123');
+    let uri = ip+':8080/routepoint/' + this.props.id;
+    fetch(uri, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include'
+    })
+      .then((response) => response.json())
+      .then((res) => {
+        this.setState({ onePoint: res });
+      })
+      .done();
   }
   render() {
     return (
@@ -65,7 +61,9 @@ export default class PointDetails extends Component {
           <View style={styles.feelhead}>
             <Image source={require('../public/images/feelicon.png')} style={styles.feelheadicon} />
             <Text style={{ fontWeight: 'bold' }}>游记分享</Text>
-            <Button type='danger' title='修改感想' onPress={() => navigate('Feel')} style={{ position: 'absolute', height: 20, right: 10 }} />
+            {
+              this.props.creatorId == this.props.userId ? <Button type='danger' title='修改感想' onPress={() => this.navigator.push({ view: <Feel id={this.props.id} /> })} style={{ position: 'absolute', height: 20, right: 10 }} /> : null
+            }
           </View>
           <View style={styles.feelcontent}>
             <Text>       {this.state.onePoint.feel}</Text>
@@ -74,30 +72,37 @@ export default class PointDetails extends Component {
         <View style={styles.pointmap}>
           <Image source={{ uri: 'http://restapi.amap.com/v3/staticmap?key=a12fe0a773225a0edbb395bce289a441&scale=2&zoom=14&markers=mid,,A:' + this.state.onePoint.longitude + ',' + this.state.onePoint.latitude + '&location=' + this.state.onePoint.longitude + ',' + this.state.onePoint.latitude + '&size=' + width + '*120' }} style={{ width: width, height: 120 }} />
         </View>
-        <TouchableOpacity style={styles.addcomment} activeOpacity={0.9} onPress={() => navigate('Comment')}>
+        <TouchableOpacity style={styles.addcomment} activeOpacity={0.9} onPress={() => this.navigator.push({ view: <Comment id={this.props.id} /> })}>
           <Image source={require('../public/images/nullstar.png')} style={{ width: 240, height: 60 }} />
           <Text style={{ color: 'rgb(168,168,168)' }}>点击添加评论</Text>
         </TouchableOpacity>
         <View style={styles.commentmain}>
           <View style={styles.commenthead}>
             <Image source={require('../public/images/commenticon.png')} style={styles.commenticon} />
-            <Text style={{ fontWeight: 'bold' }}>4.32评分  3评论</Text>
+            <Text style={{ fontWeight: 'bold' }}>{this.state.onePoint.score}评分  {this.state.onePoint.commentNum}评论</Text>
           </View>
           <View style={styles.commentlist}>
-            <View style={styles.onecomment}>
-              <Image source={require('../public/images/boy.png')} style={{ width: 40, height: 40 }} />
-              <View style={styles.onecommentright}>
-                <View style={styles.onecommentrighthead}>
-                  <Text style={{ fontWeight: 'bold', fontSize: 16 }}>Zust_lxz</Text>
-                  <View style={{ position: 'absolute', right: 0, width: 40, height: 20, backgroundColor: 'rgb(238,238,238)', alignItems: 'center', justifyContent: 'center' }}>
-                    <Text style={{ fontSize: 12, color: 'rgb(65,192,116)' }}>很一般</Text>
-                  </View>
-                </View>
-                <View>
-                  <Text style={{ color: 'rgb(125,125,125)' }}>这里真是个好地方！！！</Text>
-                </View>
-              </View>
-            </View>
+            {
+              this.state.onePoint.commentList == undefined ? null : this.state.onePoint.commentList == [] ? null :
+                this.state.onePoint.commentList.map((onecomment, index) => {
+                  return (
+                    <View style={styles.onecomment} key={index}>
+                      <Image source={require('../public/images/boy.png')} style={{ width: 40, height: 40 }} />
+                      <View style={styles.onecommentright}>
+                        <View style={styles.onecommentrighthead}>
+                          <Text style={{ fontWeight: 'bold', fontSize: 16 }}>{onecomment.userName}</Text>
+                          <View style={{ position: 'absolute', right: 0, width: 40, height: 20, backgroundColor: 'rgb(238,238,238)', alignItems: 'center', justifyContent: 'center' }}>
+                            <Text style={{ fontSize: 12, color: 'rgb(65,192,116)' }}>{this.state.scoreName[onecomment.score - 1]}</Text>
+                          </View>
+                        </View>
+                        <View>
+                          <Text style={{ color: 'rgb(125,125,125)' }}>{onecomment.content}</Text>
+                        </View>
+                      </View>
+                    </View>
+                  )
+                })
+            }
           </View>
         </View>
       </ScrollView>

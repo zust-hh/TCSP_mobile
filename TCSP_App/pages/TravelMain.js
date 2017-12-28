@@ -9,12 +9,16 @@ import {
   TouchableOpacity,
   ListView,
   ImageBackground,
+  AsyncStorage,
 } from 'react-native';
 import forge from 'node-forge';
 import ButtonComponent from 'react-native-button-component';
+import Icon from 'react-native-vector-icons/Ionicons';
 import Admin from './Admin';
-import { TeaNavigator, BasePage, NavigationBar } from 'teaset';
+import ActionButton from 'react-native-action-button';
+import { TeaNavigator, BasePage, NavigationBar, Toast } from 'teaset';
 import TravelMap from './TravelMap';
+import PointDetails from './PointDetails';
 var { height, width } = Dimensions.get('window');
 export default class TravelMain extends BasePage {
   static defaultProps = ({
@@ -26,6 +30,8 @@ export default class TravelMain extends BasePage {
     this.renderHeaderItem = this.renderHeaderItem.bind(this);
     this.renderFooterItem = this.renderFooterItem.bind(this);
     this.state = {
+      userId: 0,
+      creatorId: 0,
       travelName: '',
       pointList: [],
       dataSource: new ListView.DataSource({
@@ -33,10 +39,13 @@ export default class TravelMain extends BasePage {
       }),
       pointEn: [],
       status: false,
+      collect: 0,
+      collectName: ['收藏', '取消收藏'],
+      pointCity: [],
     }
   }
   componentWillMount() {
-    let uri = 'http://192.168.1.113:8080/route/' + this.props.id + '/info';
+    let uri = ip + ':8080/route/' + this.props.id + '/info';
     fetch(uri, {
       method: 'POST',
       headers: {
@@ -47,11 +56,68 @@ export default class TravelMain extends BasePage {
     })
       .then((response) => response.json())
       .then((res) => {
-        this.setState({ pointList: res.routepointList });
+        this.setState({ creatorId: res.creatorId });
+        this.setState({ travelName: res.name });
+        this.setState({ pointList: res.routepointList }, () => {
+          for (let i = 0; i < res.routepointList.length; i++) {
+            let md6 = '2015063000000001' + String(res.routepointList[i].name) + '143566028812345678';
+            var sign = md5(md6);
+            let trauri = "http://api.fanyi.baidu.com/api/trans/vip/translate?q=" + encodeURI(String(res.routepointList[i].name)) + "&from=zh&to=en&appid=2015063000000001&salt=1435660288&sign=" + sign;
+            fetch(trauri)
+              .then((response) => {
+                if (response.ok) {
+                  return response.json()
+                } else {
+                  console.error('服务器繁忙，请稍后再试；\r\nCode:' + response.status)
+                }
+              })
+              .then((data1) => {
+                let onePointEn = data1.trans_result[0].dst;
+                let pointEn = this.state.pointEn;
+                pointEn.push(onePointEn);
+                this.setState({ pointEn });
+              })
+              .catch((err) => {
+                console.error(err)
+              });
+            let geouri = 'http://restapi.amap.com/v3/geocode/geo?key=a12fe0a773225a0edbb395bce289a441&address=' + res.routepointList[i].name;
+            fetch(geouri)
+              .then((response) => {
+                if (response.ok) {
+                  return response.json()
+                } else {
+                  console.error('服务器繁忙，请稍后再试；\r\nCode:' + response.status)
+                }
+              })
+              .then((data) => {
+                if (data.count == 0 || data.status == 0) {
+                  this.setState({ err: 1 });
+                }
+                else {
+                  let onePointCity = data.geocodes[0].city;
+                  let pointCity = this.state.pointCity;
+                  pointCity.push(onePointCity);
+                  this.setState({ pointCity });
+                }
+              })
+              .catch((err) => {
+                console.error(err)
+              });
+          }
+        });
+        AsyncStorage.getItem('userId')
+          .then(userId => {
+            if (userId != null) {
+              this.setState({ userId })
+            }
+          })
+          .catch((err) => {
+            console.error(err);
+          });
       })
       .done();
     if (this.props.status) {
-      this.setState({ status: true },()=> {
+      this.setState({ status: true }, () => {
         this.state.status;
       });
     }
@@ -138,40 +204,38 @@ export default class TravelMain extends BasePage {
     else return null;
   }
   renderCenterContent(data) {
-    let md = forge.md.md5.create();
-    let md5 = '20171204000102168' + data.pointName + '1435660288' + 'e7lsCMhXMlCsuflPXkrO';
-    md5 = encodeURI(md5);
-    md.update(md5);
-    let sign = md.digest().toHex();
-    // alert(sign);
-    let trauri = "http://api.fanyi.baidu.com/api/trans/vip/translate?q=" + encodeURI(data.pointName) + "from=zh&to=en&appid=20171204000102168&salt=1435660288&sign=" + sign;
-    fetch(trauri)
-      .then((response) => {
-        if (response.ok) {
-          return response.json()
-        } else {
-          console.error('服务器繁忙，请稍后再试；\r\nCode:' + response.status)
-        }
-      })
-      .then((data1) => {
-        let pointEn = JSON.stringify(data1);
-        // alert(pointEn);
-        // this.setState({ pointEn }, () => {
-        //   alert(this.state.pointEn);
-        // })
-      })
-      .catch((err) => {
-        console.error(err)
-      });
-    return (
-      <View style={{ marginLeft: 15, marginTop: 10 }}>
-        <View style={{ flexDirection: 'row' }}>
-          <Text style={{ color: 'black', fontSize: 14, backgroundColor: '#00000000' }}>{data.name}</Text>
-          <View style={{ flex: 1, alignItems: 'flex-end', marginRight: 10 }}><Text style={{ color: '#777', fontSize: 12, backgroundColor: '#00000000' }}>{data.longitude}</Text></View>
-        </View>
-        <Text style={{ color: '#777', fontSize: 12, marginTop: 10, backgroundColor: '#00000000' }}>this.</Text>
-      </View>
-    );
+    if (data == undefined) return null;
+    else {
+      // let md6 = '2015063000000001'+String(data.name)+'143566028812345678';
+      // var sign = md5(md6);
+      // let trauri = "http://api.fanyi.baidu.com/api/trans/vip/translate?q="+encodeURI(String(data.name))+"&from=zh&to=en&appid=2015063000000001&salt=1435660288&sign=" + sign;
+      // fetch(trauri)
+      //   .then((response) => {
+      //     if (response.ok) {
+      //       return response.json()
+      //     } else {
+      //       console.error('服务器繁忙，请稍后再试；\r\nCode:' + response.status)
+      //     }
+      //   })
+      //   .then((data1) => {
+      //     let pointEn = data1.trans_result[0].dst;
+      //     this.setState({ pointEn }, () => {
+      //       alert(this.state.pointEn);
+      //     })
+      //   })
+      //   .catch((err) => {
+      //     console.error(err)
+      //   });
+      return (
+        <TouchableOpacity style={{ marginLeft: 15, marginTop: 10 }} activeOpacity={0.8} onPress={() => this.navigator.push({ view: <PointDetails id={data.id} creatorId={this.state.creatorId} userId={this.state.userId} /> })}>
+          <View style={{ flexDirection: 'row' }}>
+            <Text style={{ color: 'black', fontSize: 14, backgroundColor: '#00000000' }}>{data.name}</Text>
+            <View style={{ flex: 1, alignItems: 'flex-end', marginRight: 10 }}><Text style={{ color: '#777', fontSize: 12, backgroundColor: '#00000000' }}>{this.state.pointCity[data.index - 1]}</Text></View>
+          </View>
+          <Text style={{ color: '#777', fontSize: 12, marginTop: 10, backgroundColor: '#00000000' }}>{this.state.pointEn[data.index - 1]}</Text>
+        </TouchableOpacity>
+      );
+    }
   }
   render() {
     return (
@@ -202,6 +266,53 @@ export default class TravelMain extends BasePage {
           {this.renderContent(this.state.dataSource.cloneWithRows(
             this.state.pointList.slice(1, this.state.pointList.length - 1) === undefined ? [] : this.state.pointList.slice(1, this.state.pointList.length - 1)))}
         </View>
+        <ActionButton buttonColor="rgba(231,76,60,1)">
+          <ActionButton.Item buttonColor='#9b59b6' title="分享" onPress={() => console.log("notes tapped!")}>
+            <Icon name="md-create" style={styles.actionButtonIcon} />
+          </ActionButton.Item>
+          <ActionButton.Item buttonColor='#3498db' title={this.state.collectName[this.state.collect]} onPress={() => {
+            if (this.state.collect == 0) {
+              let uri = ip + ':8080/route/' + this.props.id + '/addToFavorites';
+              fetch(uri, {
+                method: 'POST',
+                headers: {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json',
+                },
+                credentials: 'include'
+              })
+                .then((response) => response.json())
+                .then((res) => {
+                  if (res.status == 1) {
+                    this.setState({ collect: 1 });
+                    Toast.success('收藏成功');
+                  }
+                })
+                .done();
+            }
+            else if (this.state.collect == 1) {
+              let uri = ip + ':8080/route/' + this.props.id + '/removeFromFavorites';
+              fetch(uri, {
+                method: 'POST',
+                headers: {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json',
+                },
+                credentials: 'include'
+              })
+                .then((response) => response.json())
+                .then((res) => {
+                  if (res.status == 1) {
+                    this.setState({ collect: 0 });
+                    Toast.success('取消收藏成功');
+                  }
+                })
+                .done();
+            }
+          }}>
+            <Icon name="md-notifications-off" style={styles.actionButtonIcon} />
+          </ActionButton.Item>
+        </ActionButton>
       </View>
     );
   }
@@ -223,5 +334,10 @@ const styles = StyleSheet.create({
     bottom: 20,
     right: 20,
     zIndex: 99999
+  },
+  actionButtonIcon: {
+    width: 15,
+    height: 15,
+    color: '#FFFFFF',
   }
 });

@@ -24,7 +24,7 @@ export default class MyItinerary extends BasePage {
   }
   componentWillMount() {
     if (this.props.id == undefined) {
-      let uri = 'http://192.168.1.113:8080/route/creatorId/' + this.props.userid;
+      let uri = ip+':8080/route/creatorId/' + this.props.userid;
       fetch(uri, {
         method: 'POST',
         headers: {
@@ -65,7 +65,7 @@ export default class MyItinerary extends BasePage {
         .done();
     }
     else {
-      let uri = 'http://192.168.1.113:8080/route/creatorId/' + this.props.id;
+      let uri = ip+':8080/route/creatorId/' + this.props.id;
       fetch(uri, {
         method: 'POST',
         headers: {
@@ -96,7 +96,7 @@ export default class MyItinerary extends BasePage {
         <View style={{ marginTop: 44 }}>
           {
             this.state.itineraryList.map((oneitinerary, index) => {
-              let cover = 'http://192.168.1.113:8080/uploads/cover/'+oneitinerary.cover;
+              let cover = ip+':8080/uploads/cover/'+oneitinerary.cover;
               return (
                 <TouchableOpacity style={styles.oneitinerary} key={index} activeOpacity={0.9} onPress={() => {
                   this.navigator.push({ view: <TravelMain status={1} id={oneitinerary.id} /> });

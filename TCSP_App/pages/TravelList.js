@@ -14,7 +14,7 @@ import {
 import forge from 'node-forge';
 import ButtonComponent from 'react-native-button-component';
 import TravelMain from './TravelMain';
-import { TeaNavigator, BasePage } from 'teaset';
+import { TeaNavigator, BasePage, Toast } from 'teaset';
 import RNFetchBlob from 'react-native-fetch-blob'
 var { height, width } = Dimensions.get('window');
 
@@ -120,39 +120,14 @@ class TravelList extends BasePage {
   }
   //渲染块内数据
   renderCenterContent(data) {
-    let md = forge.md.md5.create();
-    let md5 = '20171204000102168' + data.pointName + '1435660288' + 'e7lsCMhXMlCsuflPXkrO';
-    md5 = encodeURI(md5);
-    md.update(md5);
-    let sign = md.digest().toHex();
-    // alert(sign);
-    let trauri = "http://api.fanyi.baidu.com/api/trans/vip/translate?q=" + encodeURI(data.pointName) + "from=zh&to=en&appid=20171204000102168&salt=1435660288&sign=" + sign;
-    fetch(trauri)
-      .then((response) => {
-        if (response.ok) {
-          return response.json()
-        } else {
-          console.error('服务器繁忙，请稍后再试；\r\nCode:' + response.status)
-        }
-      })
-      .then((data1) => {
-        let pointEn = JSON.stringify(data1);
-        // alert(pointEn);
-        // this.setState({ pointEn }, () => {
-        //   alert(this.state.pointEn);
-        // })
-      })
-      .catch((err) => {
-        console.error(err)
-      });
     return (
       <View style={{ marginLeft: 15, marginTop: 10 }}>
         <View style={{ flexDirection: 'row' }}>
           <Text style={{ color: 'black', fontSize: 14, backgroundColor: '#00000000' }}>{data.pointName}</Text>
           <View style={{ flex: 1, alignItems: 'flex-end', marginRight: 10 }}><Text style={{ color: '#777', fontSize: 12, backgroundColor: '#00000000' }}>{data.pointCity}</Text></View>
         </View>
-        <Text style={{ color: '#777', fontSize: 12, marginTop: 10, backgroundColor: '#00000000' }}>this.</Text>
-      </View>
+        <Text style={{ color: '#777', fontSize: 12, marginTop: 10, backgroundColor: '#00000000' }}>{data.pointEn}</Text>
+        </View>
     );
   }
   componentWillMount() {
@@ -201,17 +176,17 @@ class TravelList extends BasePage {
             formdata.append('routepointList', );
 
             console.log(formdata);
-            RNFetchBlob.fetch('POST', 'http://192.168.1.113:8080/route/create', {
+            RNFetchBlob.fetch('POST', ip + ':8080/route/create', {
             }, [
                 { name: 'coverPic', filename: 'a.jpg', type: 'image/jpg', data: RNFetchBlob.wrap(PATH) },
                 // elements without property `filename` will be sent as plain text
                 { name: 'title', data: this.props.title },
                 { name: 'routepointList', data: JSON.stringify(routepointList) },
               ]).then((resp) => {
-                alert('创建成功' + resp.json().id);
+                Toast.success('创建成功');
                 this.navigator.push({ view: <TravelMain status={false} id={resp.json().id} /> });
               }).catch((err) => {
-                alert(JSON.stringify(err));
+                Toast.fail(JSON.stringify(err));
               })
           }
           }

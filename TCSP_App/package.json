@@ -11,6 +11,7 @@
     "node-forge": "^0.7.1",
     "react": "16.2.0",
     "react-native": "0.51.0",
+    "react-native-action-button": "^2.8.3",
     "react-native-amap3d": "^0.8.0",
     "react-native-axios": "^0.17.1",
     "react-native-button-component": "^0.1.25",
@@ -21,6 +22,7 @@
     "react-native-open-navi": "^2.0.0",
     "react-native-ratings": "^4.1.0",
     "react-native-storage": "^0.2.2",
+    "react-native-vector-icons": "^4.4.3",
     "react-navigation": "^1.0.0-beta.21",
     "teaset": "^0.4.9"
   },

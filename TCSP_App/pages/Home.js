@@ -38,7 +38,7 @@ export default class Home extends BasePage {
           onLocation={({ nativeEvent }) => {
             this.setState({ latitude: nativeEvent.latitude });
             this.setState({ longitude: nativeEvent.longitude });
-            let uri = 'http://192.168.1.113:8080/map/getRoutepointListByPosition/latitude/' + nativeEvent.latitude + '/longitude/' + nativeEvent.longitude + '/radius/' + this.state.zoomlevel;
+            let uri = ip+':8080/map/getRoutepointListByPosition/latitude/' + nativeEvent.latitude + '/longitude/' + nativeEvent.longitude + '/radius/' + this.state.zoomlevel;
             // fetch(uri, {
             //   method: 'POST',
             //   headers: {

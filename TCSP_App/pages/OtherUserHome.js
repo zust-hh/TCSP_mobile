@@ -26,7 +26,7 @@ export default class OtherUserHome extends BasePage {
     }
   }
   componentWillMount() {
-    let uri = 'http://192.168.1.113:8080/account/' + this.props.id + '/basicInfo';
+    let uri = ip+':8080/account/' + this.props.id + '/basicInfo';
     fetch(uri, {
       method: 'POST',
       headers: {

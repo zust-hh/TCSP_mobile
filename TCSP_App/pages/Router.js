@@ -1,84 +1,62 @@
-import React, { Component } from 'react';
-import {
-  AppRegistry,
-  StyleSheet,
-  Text,
-  View,
-  ScrollView,
-  Button
-} from 'react-native';
-import { TeaNavigator, NavigationPage, NavigationBar } from 'teaset';
-// import { StackNavigator } from 'react-navigation';
-import Home from './Home';
-import Regist from './Regist';
-import Login from './Login';
-import List from './TestList';
-import Admin from './Admin';
-import Comment from './Comment';
-import Feel from './Feel';
-import FindHome from './FindHome';
-import MyCollection from './MyCollection';
-import MyFocus from './MyFocus';
-import MyItinerary from './MyItinerary';
-import OtherUserHome from './OtherUserHome';
-import PointDetails from './PointDetails';
-import ReleaseTraOne from './ReleaseTraOne';
-import ReleaseTraTwo from './ReleaseTraTwo';
-import TravelList from './TravelList';
-import TravelMain from './TravelMain';
-import TravelMap from './TravelMap';
-import UserHome from './UserHome';
+// App.js
 
-export default class Router extends NavigationPage {
-  static defaultProps = {
-    ...NavigationPage.defaultProps,
-    title: 'Teaset Example',
-  };
+'use strict';
+
+import React, { Component } from 'react';
+
+import { TeaNavigator } from 'teaset';
+import Home from './pages/Home';
+import Login from './pages/Login';
+import Regist from './pages/Regist';
+import Admin from './pages/Admin';
+export default class Router extends Component {
   constructor(props) {
     super(props);
     this.state = {
       status: 0,
     }
   }
-  componentDidMount() {
-    // if(this.state.status == 0) {
-    //   this.navigator.push({view: <Home />})
-    // }
-    // else {
-    //   this.navigator.push({view: <Login />})
-    // }
+  aaa= (params) => {
+    return new Promise((resolve, reject) => {
+      fetch('http://192.168.1.113:8080/account/loginByToken', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include'
+      })
+        .then((response) => {
+          if (response.ok) {
+            return response.json()
+          } else {
+            console.error('服务器繁忙，请稍后再试；\r\nCode:' + response.status)
+          }
+        })
+        .then((data) => {
+          if (data.status == 1) {
+            resolve(1)
+          } else {
+
+          }
+        })
+        .catch((err) => {
+          console.error(err)
+        });
+    })
+  }
+  bbb= async () => {
+    let a = await this.aaa()
+    this.setState({ status: a })
+  }
+
+  componentWillMount() {
+    this.bbb();
   }
   render() {
+    alert(this.state.status);
     return (
-      // <View>
-      //   <Button onPress={()=>this.navigator.push({view:<Home/>})}
-      //   title='132'>
-
-      //   </Button>
-      // </View>
-      this.state.status == 0 ? <Home /> : <Login />
+      this.state.status == 1 ? <TeaNavigator rootView={<Admin />} /> : <TeaNavigator rootView={<Login />} />
     );
   }
 }
-// export default SimpleApp = StackNavigator({
-//   Router: { screen: Router },
-//   Home: { screen: Home },
-//   Regist: { screen: Regist },
-//   Login: { screen: Login },
-//   List: { screen: List },
-//   Admin: { screen: Admin },
-//   Comment: { screen: Comment },
-//   Feel: { screen: Feel },
-//   FindHome: { screen: FindHome },
-//   MyCollection: { screen: MyCollection },
-//   MyFocus: { screen: MyFocus },
-//   MyItinerary: { screen: MyItinerary },
-//   OtherUserHome: { screen: OtherUserHome },
-//   PointDetails: { screen: PointDetails },
-//   ReleaseTraOne: { screen: ReleaseTraOne },
-//   ReleaseTraTwo: { screen: ReleaseTraTwo },
-//   TravelList: { screen: TravelList },
-//   TravelMain: { screen: TravelMain },
-//   TravelMap: { screen: TravelMap },
-//   UserHome: { screen: UserHome },
-// });

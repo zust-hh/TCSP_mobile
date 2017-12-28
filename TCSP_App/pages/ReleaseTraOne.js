@@ -4,11 +4,12 @@ import {
   Text,
   View,
   Image,
+  TextInput,
   PixelRatio,
   TouchableHighlight,
   TouchableOpacity
 } from 'react-native';
-import { Input, TeaNavigator, BasePage, NavigationBar } from 'teaset';
+import { Input, TeaNavigator, BasePage, NavigationBar, Toast } from 'teaset';
 import ImagePicker from 'react-native-image-picker';
 import ReleaseTraTwo from './ReleaseTraTwo';
 export default class ReleaseTraOne extends BasePage {
@@ -20,6 +21,7 @@ export default class ReleaseTraOne extends BasePage {
       photouri: null,
       Lati: 0,
       Longi: 0,
+      err: 0,
     }
   }
   static defaultProps = {
@@ -27,10 +29,15 @@ export default class ReleaseTraOne extends BasePage {
   };
   gototwo = () => {
     if (this.state.valueCustom != '' && this.state.startPoint != '' && this.state.photouri != null) {
-      this.navigator.push({ view: <ReleaseTraTwo title={this.state.valueCustom} lati={this.state.Lati} longi={this.state.Longi} photouri={this.state.photouri} /> })
+      if (this.state.err == 1) {
+        Toast.sad('请输入正确的城市');
+      }
+      else {
+        this.navigator.push({ view: <ReleaseTraTwo title={this.state.valueCustom} lati={this.state.Lati} longi={this.state.Longi} photouri={this.state.photouri} /> })
+      }
     }
     else {
-      alert('请先填写信息');
+      Toast.sad('请先填写信息');
     }
   }
   selectPhotoTapped() {
@@ -79,19 +86,20 @@ export default class ReleaseTraOne extends BasePage {
             onPress={() => this.navigator.pop()
             } />}
         />
-        <Input
-          style={styles.input}
-          onChangeText={text => this.setState({ valueCustom: text })}
-          placeholder="行程标题"
-          placeholderTextColor='rgb(200,200,200)'
-        />
         <TouchableOpacity style={styles.upload} activeOpcity={0.9} onPress={this.selectPhotoTapped.bind(this)}>
           {this.state.photouri === null ? <Image style={{ width: 60, height: 60, marginBottom: 25, marginTop: 45 }} source={require('../public/images/imgupload.png')} /> :
             <Image style={{ width: 150, height: 150, borderRadius: 15 }} source={this.state.photouri} />
           }
           <Text style={{ fontSize: 12 }}>封面图片</Text>
         </TouchableOpacity>
-        <Input
+        <TextInput
+          style={styles.input}
+          onChangeText={text => this.setState({ valueCustom: text })}
+          placeholder="行程标题"
+          placeholderTextColor='rgb(200,200,200)'
+        />
+
+        <TextInput
           style={styles.input}
           onChangeText={text => this.setState({ startPoint: text }, () => {
             let geouri = 'http://restapi.amap.com/v3/geocode/geo?key=a12fe0a773225a0edbb395bce289a441&address=' + this.state.startPoint;
@@ -104,8 +112,14 @@ export default class ReleaseTraOne extends BasePage {
                 }
               })
               .then((data) => {
-                let startArray = JSON.parse(JSON.stringify(data)).geocodes[0].location.split(',');
-                this.setState({ Lati: parseFloat(startArray[1]), Longi: parseFloat(startArray[0]) });
+                if (data.count == 0 || data.status == 0) {
+                  this.setState({ err: 1 });
+                }
+                else {
+                  let startArray = JSON.parse(JSON.stringify(data)).geocodes[0].location.split(',');
+                  this.setState({ Lati: parseFloat(startArray[1]), Longi: parseFloat(startArray[0]) });
+                  this.setState({ err: 0 });
+                }
               })
               .catch((err) => {
                 console.error(err)
@@ -117,7 +131,7 @@ export default class ReleaseTraOne extends BasePage {
         <TouchableHighlight
           onPress={this.gototwo}
           style={styles.gototwo} activeOpacity={0.7} underlayColor='rgb(53,122,232)'>
-          <Text>开始编辑</Text>
+          <Text style={{color:'#fff'}}>开始编辑</Text>
         </TouchableHighlight>
       </View>
     );
@@ -130,11 +144,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'column',
     backgroundColor: '#FFFFFF',
+    justifyContent: 'center',
   },
   input: {
-    marginTop: 80,
+    marginTop: 25,
     width: 200,
-    backgroundColor: 'white',
+    height: 55,
+    borderBottomColor: '#36485f',
     color: 'black'
   },
   upload: {
@@ -144,7 +160,8 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     backgroundColor: 'rgb(226,226,226)',
     marginTop: 50,
-    borderRadius: 15
+    borderRadius: 15,
+    marginTop: 50
   },
   gototwo: {
     marginTop: 70,

@@ -3,7 +3,7 @@
 'use strict';
 
 import React, { Component } from 'react';
-
+import { AsyncStorage } from 'react-native';
 import { TeaNavigator } from 'teaset';
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -13,56 +13,67 @@ export default class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      status: 1,
+      status: 0,
     }
   }
-  aaa = (params) => {
-    return new Promise((resolve, reject) => {
-      fetch('http://192.168.1.113:8080/account/loginByToken', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include'
+  aaa = () => {
+    // AsyncStorage.removeItem('loginState');
+    // AsyncStorage.setItem('loginState','123');
+    AsyncStorage.getItem('loginState')
+      .then(loginState => {
+        if (loginState == null) {
+          this.setState({ status: 2 })
+        }
+        if (loginState != null) {
+          this.setState({ status: 1 })
+        }
       })
-        .then((response) => {
-          if (response.ok) {
-            return response.json()
-          } else {
-            resolve(2);
-            return false;
-          }
-        })
-        .then((data) => {
-          if (data) {
-
-          } else {
-            if (data.status == 1) {
-              resolve(1)
-            } else {
-              resolve(2)
-            }
-          }
-        })
-        .catch((err) => {
-          console.error(err)
-        });
-    })
+      .catch((err) => {
+        console.error(err);
+      });
   }
   bbb = async () => {
-    let a = await this.aaa();
-    this.setState({ status: a }, () => {
-
-    })
+    await this.aaa();
   }
 
   componentWillMount() {
     this.bbb();
   }
   render() {
-    return (
-      this.state.status == 0 ? null : this.state.status == 1 ? <TeaNavigator rootView={<Admin />} /> : <TeaNavigator rootView={<Login />} />
-    );
+    if (this.state.status == 0) {
+      return null;
+    }
+    if (this.state.status == 1) {
+      return <TeaNavigator rootView={<Admin />} />
+    }
+    else if (this.state.status == 2) {
+      return <TeaNavigator rootView={<Login />} />
+    }
+    // AsyncStorage.getItem('loginState')
+    //   .then(login => JSON.parse(login))
+    //   .then(loginState => {
+    //     if (loginState == null) {
+    //       x = 2
+    //     }
+    //   })
+    //   .catch((err) => {
+    //     console.err(err);
+    //   });
+    // if (x == 1) {
+    //   return <TeaNavigator rootView={<Admin />} />
+    // }
+    // else if (x == 2) {
+    //   return <TeaNavigator rootView={<Login />} />
+    // }
+
+    // if (JSON.stringify(storage.cache.loginState) == undefined) {
+    //   return <TeaNavigator rootView={<Admin />} />
+    // }
+    // else {
+    //   return <TeaNavigator rootView={<Login />} />
+    // }
+    // return (
+    //   this.state.status == 1 ? <TeaNavigator rootView={<Admin />} /> : 
+    // );
   }
 }

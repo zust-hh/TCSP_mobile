@@ -1,3 +1,5 @@
+import Storage from 'react-native-storage';
+import { AsyncStorage } from 'react-native';
 let storage = new Storage({
   //最大容量，默认值1000条数据循环存储
   size: 1000,
@@ -20,6 +22,5 @@ let storage = new Storage({
   // 或是写到另一个文件里，这里require引入
 });
 //导出`storage`
-exports.storage = storage;
+global.storage = storage;
 //在这里设置`storage.sync`
-storage.sync = require('./RNAsyncStorage_asyn').ssss;

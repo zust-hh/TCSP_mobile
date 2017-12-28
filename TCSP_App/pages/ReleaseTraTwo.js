@@ -5,13 +5,14 @@ import {
   View,
   Dimensions,
   TouchableOpacity,
-  Image
+  Image,
+  ScrollView
 } from 'react-native';
 import OneSearch from './components/OneSearch';
 import OnePoint from './components/OnePoint';
 import { MapView, Marker } from 'react-native-amap3d';
 import TravelList from './TravelList';
-import { SearchInput, Button, Badge, Theme, Label, Drawer, ListRow, TeaNavigator, BasePage, NavigationBar } from 'teaset';
+import { SearchInput, Button, Badge, Theme, Label, Drawer, ListRow, TeaNavigator, BasePage, NavigationBar, Toast } from 'teaset';
 import ButtonComponent from 'react-native-button-component';
 export default class ReleaseTraTwo extends BasePage {
 
@@ -96,13 +97,13 @@ export default class ReleaseTraTwo extends BasePage {
       this.navigator.push({ view: <TravelList pointList={this.state.pointList} title={this.props.title} photouri={this.props.photouri} /> })
     }
     else {
-      alert('最少添加一个路径点');
+      Toast.sad('最少添加一个路径点');
     }
   }
   //右侧弹出抽屉View
   pointListView() {
     return (
-      <View style={{ backgroundColor: Theme.defaultColor, height: 260, width: 170 }}>
+      <ScrollView style={{ backgroundColor: Theme.defaultColor, height: Dimensions.get('window').height, width: 170 }}>
         {
           this.state.pointNum === 0 ? <View style={styles.drawerContainer}><ListRow
             title={'您还没有添加路径点'}
@@ -130,7 +131,7 @@ export default class ReleaseTraTwo extends BasePage {
               }
             </View>
         }
-      </View>
+      </ScrollView>
     )
   }
   //删除一个路径点，给子组件调用
@@ -219,8 +220,8 @@ export default class ReleaseTraTwo extends BasePage {
           showsZoomControls={false}
           showsLabels={true}
           coordinate={{
-            latitude: this.props.lati,
-            longitude: this.props.longi,
+            latitude: this.state.Lati,
+            longitude: this.state.Longi,
           }}
           onStatusChangeComplete={
             ({ nativeEvent }) => {
@@ -277,18 +278,36 @@ export default class ReleaseTraTwo extends BasePage {
         </MapView>
         <Button
           onPress={() => {
-            let pointNum = this.state.pointNum + 1;
-            this.setState({ pointNum });
-            let onePointInfo = {
-              "pointNum": this.state.pointNum + 1,
-              "pointName": this.state.FormatAdd,
-              "pointCity": this.state.FormatCity,
-              "pointLongi": this.state.Longi,
-              "pointLati": this.state.Lati
-            }
-            let pointList = this.state.pointList;
-            pointList.push(onePointInfo);
-            this.setState({ pointList });
+            let md6 = '2015063000000001' + String(this.state.FormatAdd) + '143566028812345678';
+            var sign = md5(md6);
+            let trauri = "http://api.fanyi.baidu.com/api/trans/vip/translate?q=" + encodeURI(String(this.state.FormatAdd)) + "&from=zh&to=en&appid=2015063000000001&salt=1435660288&sign=" + sign;
+            fetch(trauri)
+              .then((response) => {
+                if (response.ok) {
+                  return response.json()
+                } else {
+                  console.error('服务器繁忙，请稍后再试；\r\nCode:' + response.status)
+                }
+              })
+              .then((data1) => {
+                let pointNum = this.state.pointNum + 1;
+                this.setState({ pointNum });
+                let onePointInfo = {
+                  "pointNum": this.state.pointNum,
+                  "pointName": this.state.FormatAdd,
+                  "pointCity": this.state.FormatCity,
+                  "pointLongi": this.state.Longi,
+                  "pointLati": this.state.Lati,
+                  "pointEn": data1.trans_result[0].dst,
+                }
+                let pointList = this.state.pointList;
+                pointList.push(onePointInfo);
+                this.setState({ pointList });
+              })
+              .catch((err) => {
+                console.error(err)
+              });
+
           }}
           title="添加该点"
           style={styles.addbtn}

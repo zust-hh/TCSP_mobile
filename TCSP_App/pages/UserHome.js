@@ -7,13 +7,13 @@ import {
   Dimensions,
   Image,
   TouchableOpacity,
+  AsyncStorage
 } from 'react-native';
-// import { StackNavigator } from 'react-navigation';
 import MyCollection from './MyCollection';
 import MyFocus from './MyFocus';
 import MyItinerary from './MyItinerary';
-// import OtherUserHome from './OtherUserHome';
-import { BasePage, NavigationBar, TeaNavigator } from 'teaset';
+import Login from './Login';
+import { BasePage, NavigationBar, TeaNavigator, Toast } from 'teaset';
 var width = Dimensions.get('window').width;
 export default class UserHome extends BasePage {
   static defaultProps = {
@@ -23,11 +23,11 @@ export default class UserHome extends BasePage {
     super(props);
     this.state = {
       username: '',
-      userid:'',
+      userid: '',
     }
   }
   componentWillMount() {
-    fetch('http://192.168.1.113:8080/account/getUserInfoByTokenInCookie', {
+    fetch(ip+':8080/account/getUserInfoByTokenInCookie', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -37,8 +37,8 @@ export default class UserHome extends BasePage {
     })
       .then((response) => response.json())
       .then((res) => {
-        this.setState({username:res.userName});
-        this.setState({userid:res.id});
+        this.setState({ username: res.userName });
+        this.setState({ userid: res.id });
       })
       .done();
   }
@@ -63,12 +63,16 @@ export default class UserHome extends BasePage {
             <Image style={{ width: 40, height: 40, marginBottom: 10 }} source={require('../public/images/mygz.png')} />
             <Text>我的关注</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.onecontent} activeOpacity={0.5} onPress={() => this.navigator.push({ view: <MyItinerary userid={this.state.userid}/> })}>
+          <TouchableOpacity style={styles.onecontent} activeOpacity={0.5} onPress={() => this.navigator.push({ view: <MyItinerary userid={this.state.userid} /> })}>
             <Image style={{ width: 40, height: 40, marginBottom: 10 }} source={require('../public/images/myxc.png')} />
             <Text>我的行程</Text>
           </TouchableOpacity>
         </View>
-        <TouchableOpacity style={styles.exit} activeOpacity={0.5}>
+        <TouchableOpacity style={styles.exit} activeOpacity={0.5} onPress={() => {
+          AsyncStorage.removeItem('loginState');
+          Toast.smile('退出成功');
+          this.navigator.push({ view: <Login /> });
+        }}>
           <Text style={{ color: 'red', fontSize: 16 }}>退出登录</Text>
         </TouchableOpacity>
       </View>

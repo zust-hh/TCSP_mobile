@@ -24,7 +24,7 @@ export default class Regist extends BasePage {
     scene: TeaNavigator.SceneConfigs.PushFromRight,
   };
   regist = () => {
-    fetch('http://192.168.1.113:8080/account/register', {
+    fetch(ip+':8080/account/register', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -76,8 +76,12 @@ export default class Regist extends BasePage {
           <TouchableOpacity style={styles.button} onPress={this.regist}>
             <Text style={styles.btntext}>Sign up</Text>
           </TouchableOpacity>
-          <Button title='已有帐号' onPress={() => this.navigator.pop()}/>
         </View>
+        <TouchableOpacity
+          style={{ position: 'absolute', top: 20, left: 20, padding: 10, backgroundColor: 'rgb(0,122,204)' }}
+          onPress={() => this.navigator.pop()}>
+          <Text style={{ color: '#fff' }}>←已有帐号</Text>
+        </TouchableOpacity>
       </View>
 
     );

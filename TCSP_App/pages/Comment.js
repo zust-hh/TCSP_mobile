@@ -10,7 +10,7 @@ import {
   Dimensions,
 } from 'react-native';
 import { Rating, AirbnbRating } from 'react-native-ratings';
-import { Input, TeaNavigator, NavigationBar, BasePage } from 'teaset';
+import { Input, TeaNavigator, NavigationBar, BasePage, Toast } from 'teaset';
 var width = Dimensions.get('window').width;
 export default class Comment extends BasePage {
   static defaultProps = {
@@ -19,7 +19,8 @@ export default class Comment extends BasePage {
   constructor(props) {
     super(props);
     this.state = {
-
+      score: 0,
+      comment: '',
     }
   }
   render() {
@@ -33,7 +34,32 @@ export default class Comment extends BasePage {
           leftView={<NavigationBar.BackButton title='Back'
             onPress={() => this.navigator.pop()
             } />}
-          rightView={<TouchableOpacity onPress={() => { }} activeOpacity={0.7} >
+          rightView={<TouchableOpacity onPress={() => {
+            let uri = ip+':8080/routepoint/' + this.props.id + '/sendComment';
+            fetch(uri, {
+              method: 'POST',
+              headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                comment: this.state.comment,
+                score: this.state.score
+              }),
+              credentials: 'include'
+            })
+              .then((response) => response.json())
+              .then((res) => {
+                if (res.status == 1) {
+                  Toast.success('发表成功');
+                  this.navigator.pop();
+                }
+                else {
+                  console.error(res.message);
+                }
+              })
+              .done();
+          }} activeOpacity={0.7} >
             <Image source={require('../public/images/send.png')} style={{ width: 25, height: 25, marginRight: 15 }} />
           </TouchableOpacity>}
         />
@@ -43,12 +69,13 @@ export default class Comment extends BasePage {
             reviews={['太糟了', '失望哦', '很一般', '还成吧', '极好的']}
             defaultRating={0}
             size={35}
-          // onFinishRating={(rating)=>alert("Rating is: " + rating)}
+            style={{ zIndex: 9999 }}
+            onFinishRating={(rating) => this.setState({ score: rating })}
           />
         </View>
         <Input
           style={styles.input}
-          onChangeText={text => this.setState({ valueCustom: text })}
+          onChangeText={text => this.setState({ comment: text })}
           placeholder="点评一下吧"
           placeholderTextColor='rgb(200,200,200)'
         />
@@ -64,7 +91,7 @@ const styles = StyleSheet.create({
     padding: 10
   },
   commenttop: {
-    marginTop: 20,
+    marginTop: 64,
     paddingBottom: 15,
     borderColor: '#eee',
     borderBottomWidth: 1,

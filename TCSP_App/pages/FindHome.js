@@ -8,7 +8,7 @@ import {
   Dimensions,
   ScrollView,
 } from 'react-native';
-import { SegmentedView, TeaNavigator, BasePage } from 'teaset';
+import { SegmentedView, TeaNavigator, BasePage, Toast } from 'teaset';
 import OtherUserHome from './OtherUserHome';
 import TravelMain from './TravelMain';
 export default class FindHome extends BasePage {
@@ -23,7 +23,7 @@ export default class FindHome extends BasePage {
     scene: TeaNavigator.SceneConfigs.PushFromRight,
   };
   fetchfc() {
-    fetch('http://192.168.1.113:8080/route/suggest/latitude/39.91095/longitude/116.37296/radius/30', {
+    fetch(ip+':8080/route/suggest/latitude/39.91095/longitude/116.37296/radius/30', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -36,7 +36,7 @@ export default class FindHome extends BasePage {
         this.setState({ findRouterList: res1 });
       })
       .done();
-    fetch('http://192.168.1.113:8080/suggestion/bigVList', {
+    fetch(ip+':8080/suggestion/bigVList', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -46,9 +46,7 @@ export default class FindHome extends BasePage {
     })
       .then((response) => response.json())
       .then((res) => {
-        this.setState({ findPeopleList: res },()=> {
-          alert(this.state.findPeopleList);
-        });
+        this.setState({ findPeopleList: res });
       })
       .done();
   }
@@ -62,20 +60,20 @@ export default class FindHome extends BasePage {
           <View style={{ flex: 1, alignItems: 'center', padding: 10 }}>
             <ScrollView>
               {
-                this.state.findRouterList.map((onefind,index) => {
+                this.state.findRouterList.map((onefind, index) => {
                   return (
-                    <TouchableOpacity style={styles.onetravel} key={index} activeOpacity={0.9} onPress={()=>{this.navigator.push({view: <TravelMain status={1} id={onefind.id}/>})}}>
-                    <Image style={{ width: Dimensions.get('window').width - 20, height: 210, borderRadius: 5 }} source={require('../public/images/image1.jpg')} />
-                    <View style={styles.oneinfo}>
-                      <View style={{ flexDirection: 'column' }}>
-                        <Text style={{ color: '#fff', fontSize: 24, marginBottom: 5 }}>{onefind.name}</Text>
-                        {/* <Text style={{ color: '#fff', marginLeft: 5, fontSize: 12 }}>出发地：上海市</Text> */}
+                    <TouchableOpacity style={styles.onetravel} key={index} activeOpacity={0.9} onPress={() => { this.navigator.push({ view: <TravelMain status={1} id={onefind.id} /> }) }}>
+                      <Image style={{ width: Dimensions.get('window').width - 20, height: 210, borderRadius: 5 }} source={require('../public/images/image1.jpg')} />
+                      <View style={styles.oneinfo}>
+                        <View style={{ flexDirection: 'column' }}>
+                          <Text style={{ color: '#fff', fontSize: 24, marginBottom: 5 }}>{onefind.name}</Text>
+                          {/* <Text style={{ color: '#fff', marginLeft: 5, fontSize: 12 }}>出发地：上海市</Text> */}
+                        </View>
+                        <View style={{ position: 'absolute', right: 20, top: 20 }}>
+                          <Text style={{ color: '#fff', fontSize: 16 }}>{onefind.creatorName}</Text>
+                        </View>
                       </View>
-                      <View style={{ position: 'absolute', right: 20, top: 20 }}>
-                        <Text style={{ color: '#fff', fontSize: 16 }}>{onefind.creatorName}</Text>
-                      </View>
-                    </View>
-                  </TouchableOpacity>
+                    </TouchableOpacity>
                   )
                 })
               }
@@ -97,7 +95,7 @@ export default class FindHome extends BasePage {
                         </View>
                         <View style={{ position: 'absolute', right: 30 }}>
                           <TouchableOpacity onPress={() => {
-                            let uri = 'http://192.168.1.113:8080/concern/add/' + oneuser.id;
+                            let uri = ip+':8080/concern/add/' + oneuser.id;
                             fetch(uri, {
                               method: 'POST',
                               headers: {
@@ -109,7 +107,20 @@ export default class FindHome extends BasePage {
                               .then((response) => response.json())
                               .then((res) => {
                                 if (res.status == 1) {
-
+                                  Toast.success('关注成功！');
+                                  fetch(ip+':8080/suggestion/bigVList', {
+                                    method: 'POST',
+                                    headers: {
+                                      'Accept': 'application/json',
+                                      'Content-Type': 'application/json',
+                                    },
+                                    credentials: 'include'
+                                  })
+                                    .then((response) => response.json())
+                                    .then((res) => {
+                                      this.setState({ findPeopleList: res });
+                                    })
+                                    .done();
                                 }
                                 else {
                                 }

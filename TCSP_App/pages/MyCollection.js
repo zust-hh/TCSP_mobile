@@ -24,7 +24,7 @@ export default class MyCollection extends NavigationPage {
   }
   componentWillMount() {
     if (this.props.id == undefined) {
-      fetch('http://192.168.1.113:8080/account/my/favoriteRoute', {
+      fetch(ip+':8080/account/my/favoriteRoute', {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -39,7 +39,7 @@ export default class MyCollection extends NavigationPage {
         .done();
     }
     else {
-      let uri = 'http://192.168.1.113:8080/account/'+this.props.id+'/favoriteRoute';
+      let uri = ip+':8080/account/'+this.props.id+'/favoriteRoute';
       fetch(uri, {
         method: 'POST',
         headers: {

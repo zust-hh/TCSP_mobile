@@ -13,7 +13,7 @@ import {
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Admin from './Admin';
 import Regist from './Regist';
-import { TeaNavigator, BasePage } from 'teaset';
+import { TeaNavigator, BasePage,Toast } from 'teaset';
 
 class Login extends BasePage {
     constructor(props) {
@@ -27,7 +27,7 @@ class Login extends BasePage {
         scene: TeaNavigator.SceneConfigs.PushFromRight,
     };
     login = () => {
-        fetch('http://192.168.1.113:8080/account/login', {
+        fetch(ip+':8080/account/login', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -42,16 +42,19 @@ class Login extends BasePage {
             .then((response) => response.json())
             .then((res) => {
                 if (res.status == 1) {
+                    AsyncStorage.setItem('loginState',res.token);
+                    AsyncStorage.setItem('userId',String(res.userId));
+                    Toast.smile('登录成功');
                     this.navigator.push({ view: <Admin /> })
                 }
                 else {
-                    alert(res.message);
+                    console.error(res.message);
                 }
             })
             .done();
     }
     render() {
-
+        // alert(JSON.stringify(storage.cache.loginState));
         return (
             <View style={styles.views}>
                 <KeyboardAwareScrollView contentContainerStyle={{ flex: 1 }}
@@ -75,9 +78,9 @@ class Login extends BasePage {
                             <Text>Log in</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
-                            style={styles.btn}
+                            style={{ position: 'absolute', top: 20, right: 20, padding: 10, backgroundColor: 'rgb(0,122,204)' }}
                             onPress={() => this.navigator.push({ view: <Regist /> })}>
-                            <Text>现在注册</Text>
+                            <Text style={{ color: '#fff' }}>现在注册=></Text>
                         </TouchableOpacity>
                     </View>
                 </KeyboardAwareScrollView>
