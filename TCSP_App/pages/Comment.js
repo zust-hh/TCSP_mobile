@@ -35,7 +35,7 @@ export default class Comment extends BasePage {
             onPress={() => this.navigator.pop()
             } />}
           rightView={<TouchableOpacity onPress={() => {
-            let uri = ip+':8080/routepoint/' + this.props.id + '/sendComment';
+            let uri = ip + ':8080/routepoint/' + this.props.id + '/sendComment';
             fetch(uri, {
               method: 'POST',
               headers: {
@@ -51,8 +51,27 @@ export default class Comment extends BasePage {
               .then((response) => response.json())
               .then((res) => {
                 if (res.status == 1) {
-                  Toast.success('发表成功');
-                  this.navigator.pop();
+                  fetch(ip + ':8080/account/getUserInfoByTokenInCookie', {
+                    method: 'POST',
+                    headers: {
+                      'Accept': 'application/json',
+                      'Content-Type': 'application/json',
+                    },
+                    credentials: 'include'
+                  })
+                    .then((response) => response.json())
+                    .then((res) => {
+                      let oneComment = {
+                        userName: res.userName,
+                        score: this.state.score,
+                        content: this.state.comment
+                      }
+                      this.props.setComment(oneComment);
+                      Toast.success('发表成功');
+                      this.navigator.pop();
+                    })
+                    .done();
+
                 }
                 else {
                   console.error(res.message);

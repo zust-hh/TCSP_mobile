@@ -22,6 +22,11 @@ export default class Feel extends BasePage {
       content: '',
     }
   }
+  componentWillMount() {
+    if (this.props.feel != '') {
+      this.setState({ content: this.props.feel })
+    }
+  }
   render() {
     return (
       <View style={styles.container}>
@@ -34,7 +39,7 @@ export default class Feel extends BasePage {
             onPress={() => this.navigator.pop()
             } />}
           rightView={<TouchableOpacity onPress={() => {
-            let uri = ip+':8080/routepoint/' + this.props.id + '/feel/save';
+            let uri = ip + ':8080/routepoint/' + this.props.id + '/feel/save';
             fetch(uri, {
               method: 'POST',
               headers: {
@@ -49,6 +54,7 @@ export default class Feel extends BasePage {
               .then((response) => response.json())
               .then((res) => {
                 if (res.status == 1) {
+                  this.props.setFeel(this.state.content);
                   Toast.success('发表成功');
                   this.navigator.pop();
                 }
@@ -61,15 +67,27 @@ export default class Feel extends BasePage {
             <Image source={require('../public/images/send.png')} style={{ width: 25, height: 25, marginRight: 15 }} />
           </TouchableOpacity>}
         />
-        <TextInput
-          style={styles.input}
-          onChangeText={text => this.setState({ content: text })}
-          placeholder="把你的感想分享一下吧"
-          placeholderTextColor='rgb(200,200,200)'
-          autoFocus={true}
-          multiline={true}
-          underlineColorAndroid={'transparent'}
-        />
+        {
+          this.state.content == '' ? <TextInput
+            style={styles.input}
+            onChangeText={text => this.setState({ content: text })}
+            placeholder="把你的感想分享一下吧"
+            placeholderTextColor='rgb(200,200,200)'
+            autoFocus={true}
+            multiline={true}
+            underlineColorAndroid={'transparent'}
+          /> : <TextInput
+              style={styles.input}
+              onChangeText={text => this.setState({ content: text })}
+              placeholder="把你的感想分享一下吧"
+              placeholderTextColor='rgb(200,200,200)'
+              defaultValue={this.state.content}
+              autoFocus={true}
+              multiline={true}
+              underlineColorAndroid={'transparent'}
+            />
+        }
+
       </View>
     );
   }

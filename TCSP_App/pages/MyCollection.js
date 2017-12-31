@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Dimensions,
   Image,
+  ScrollView
 } from 'react-native';
 var width = Dimensions.get('window').width;
 import { BasePage, NavigationBar, TeaNavigator, NavigationPage } from 'teaset';
@@ -22,9 +23,9 @@ export default class MyCollection extends NavigationPage {
       collectionList: []
     }
   }
-  componentWillMount() {
+  componentDidMount() {
     if (this.props.id == undefined) {
-      fetch(ip+':8080/account/my/favoriteRoute', {
+      fetch(ip + ':8080/account/my/favoriteRoute', {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -39,7 +40,7 @@ export default class MyCollection extends NavigationPage {
         .done();
     }
     else {
-      let uri = ip+':8080/account/'+this.props.id+'/favoriteRoute';
+      let uri = ip + ':8080/account/' + this.props.id + '/favoriteRoute';
       fetch(uri, {
         method: 'POST',
         headers: {
@@ -67,15 +68,16 @@ export default class MyCollection extends NavigationPage {
             onPress={() => this.navigator.pop()
             } />}
         />
-        <View style={{ marginTop: 44 }}>
+        <ScrollView style={{ marginTop: 44 }}>
           {
             this.state.collectionList.map((onecollection, index) => {
+              let cover = ip+':8080/uploads/cover/'+onecollection.coverPic;
               return (
                 <TouchableOpacity style={styles.onecollection} key={index} activeOpacity={0.9} onPress={() => {
-                  this.navigator.push({ view: <TravelMain id={onecollection.id}/> });
+                  this.navigator.push({ view: <TravelMain id={onecollection.id} status={true} /> });
                 }}>
                   <View style={styles.collectioncontent}>
-                    <Image style={{ width: 50, height: 50 }} source={require('../public/images/image1.jpg')} />
+                    <Image style={{ width: 50, height: 50 }} source={{uri: cover}} />
                     <View style={{ marginLeft: 15 }}>
                       <Text style={{ fontSize: 18, marginBottom: 5 }}>{onecollection.name}</Text>
                       <Text style={{ fontSize: 12 }}>{onecollection.creatorName}</Text>
@@ -86,7 +88,7 @@ export default class MyCollection extends NavigationPage {
               )
             })
           }
-        </View>
+        </ScrollView>
 
       </View>
     );

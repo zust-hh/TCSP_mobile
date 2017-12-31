@@ -130,7 +130,7 @@ class TravelList extends BasePage {
         </View>
     );
   }
-  componentWillMount() {
+  componentDidMount() {
     var pointList = this.props.pointList;
     this.setState({ pointList });
   }

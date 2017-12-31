@@ -22,7 +22,7 @@ export default class TravelMap extends BasePage {
   static defaultProps = ({
     scene: TeaNavigator.SceneConfigs.PushFromRight,
   });
-  componentWillMount() {
+  componentDidMount() {
     let linecount = [];
     for (let i = 0; i < this.props.pointList.length - 1; i = i + 1) {
       let line = [this.props.pointList[i].latitude, this.props.pointList[i].longitude, this.props.pointList[i + 1].latitude, this.props.pointList[i + 1].longitude];

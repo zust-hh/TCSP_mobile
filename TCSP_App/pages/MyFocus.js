@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Dimensions,
   Image,
+  ScrollView
 } from 'react-native';
 import { BasePage, NavigationBar, TeaNavigator, Toast } from 'teaset';
 import OtherUserHome from './OtherUserHome';
@@ -43,7 +44,7 @@ export default class MyFocus extends BasePage {
       ],
     }
   }
-  componentWillMount() {
+  componentDidMount() {
     if (this.props.id == undefined) {
       fetch(ip+':8080/account/my/concernList', {
         method: 'POST',
@@ -88,7 +89,7 @@ export default class MyFocus extends BasePage {
             onPress={() => this.navigator.pop()
             } />}
         />
-        <View style={{ marginTop: 44, elevation: 1, backgroundColor: '#FFFFFF', }}>
+        <ScrollView style={{ marginTop: 44, elevation: 1, backgroundColor: '#FFFFFF', }}>
           {
             this.state.focusList.map((onefocus, index) => {
               return (
@@ -160,7 +161,7 @@ export default class MyFocus extends BasePage {
               )
             })
           }
-        </View>
+        </ScrollView>
       </View>
     );
   }

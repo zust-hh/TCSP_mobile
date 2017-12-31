@@ -26,7 +26,7 @@ export default class UserHome extends BasePage {
       userid: '',
     }
   }
-  componentWillMount() {
+  componentDidMount() {
     fetch(ip+':8080/account/getUserInfoByTokenInCookie', {
       method: 'POST',
       headers: {
@@ -113,10 +113,3 @@ const styles = StyleSheet.create({
   }
 })
 
-// export default SimpleApp = StackNavigator({
-//   UserHome: { screen: UserHome },
-//   MyCollection: { screen: MyCollection },
-//   MyFocus: { screen: MyFocus },
-//   MyItinerary: { screen: MyItinerary },
-//   OtherUserHome: { screen: OtherUserHome },
-// });

@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Dimensions,
   Image,
+  ScrollView
 } from 'react-native';
 import { BasePage, NavigationBar, TeaNavigator } from 'teaset';
 import TravelMain from './TravelMain';
@@ -22,7 +23,7 @@ export default class MyItinerary extends BasePage {
       itineraryList: []
     }
   }
-  componentWillMount() {
+  componentDidMount() {
     if (this.props.id == undefined) {
       let uri = ip+':8080/route/creatorId/' + this.props.userid;
       fetch(uri, {
@@ -93,13 +94,13 @@ export default class MyItinerary extends BasePage {
             onPress={() => this.navigator.pop()
             } />}
         />
-        <View style={{ marginTop: 44 }}>
+        <ScrollView style={{ marginTop: 44 }}>
           {
             this.state.itineraryList.map((oneitinerary, index) => {
               let cover = ip+':8080/uploads/cover/'+oneitinerary.cover;
               return (
                 <TouchableOpacity style={styles.oneitinerary} key={index} activeOpacity={0.9} onPress={() => {
-                  this.navigator.push({ view: <TravelMain status={1} id={oneitinerary.id} /> });
+                  this.navigator.push({ view: <TravelMain status={true} id={oneitinerary.id} /> });
                 }}>
                   <View style={styles.itinerarycontent}>
                     <Image style={{ width: 50, height: 50 }} source={{uri: cover}} />
@@ -113,7 +114,7 @@ export default class MyItinerary extends BasePage {
               )
             })
           }
-        </View>
+        </ScrollView>
       </View>
     );
   }

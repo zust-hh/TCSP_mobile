@@ -42,9 +42,11 @@ export default class TravelMain extends BasePage {
       collect: 0,
       collectName: ['收藏', '取消收藏'],
       pointCity: [],
+      // coverPic: ip+':8080/uploads/cover/1514633175596.jpg',
+      coverPic: '',
     }
   }
-  componentWillMount() {
+  componentDidMount() {
     let uri = ip + ':8080/route/' + this.props.id + '/info';
     fetch(uri, {
       method: 'POST',
@@ -58,6 +60,7 @@ export default class TravelMain extends BasePage {
       .then((res) => {
         this.setState({ creatorId: res.creatorId });
         this.setState({ travelName: res.name });
+        this.setState({ coverPic: ip+':8080/uploads/cover/'+res.coverPic });
         this.setState({ pointList: res.routepointList }, () => {
           for (let i = 0; i < res.routepointList.length; i++) {
             let md6 = '2015063000000001' + String(res.routepointList[i].name) + '143566028812345678';
@@ -117,9 +120,7 @@ export default class TravelMain extends BasePage {
       })
       .done();
     if (this.props.status) {
-      this.setState({ status: true }, () => {
-        this.state.status;
-      });
+      this.setState({ status: true });
     }
 
   }
@@ -140,7 +141,7 @@ export default class TravelMain extends BasePage {
   }
   //渲染每一项的数据
   renderItem(data) {
-    if (data.pointNum > 1 && data.pointNum < this.state.pointList.length + 1) {
+    if (data.index > 1 && data.index < this.state.pointList.length + 1) {
       return (this.renderCenterItem(data));
     }
   }
@@ -206,26 +207,6 @@ export default class TravelMain extends BasePage {
   renderCenterContent(data) {
     if (data == undefined) return null;
     else {
-      // let md6 = '2015063000000001'+String(data.name)+'143566028812345678';
-      // var sign = md5(md6);
-      // let trauri = "http://api.fanyi.baidu.com/api/trans/vip/translate?q="+encodeURI(String(data.name))+"&from=zh&to=en&appid=2015063000000001&salt=1435660288&sign=" + sign;
-      // fetch(trauri)
-      //   .then((response) => {
-      //     if (response.ok) {
-      //       return response.json()
-      //     } else {
-      //       console.error('服务器繁忙，请稍后再试；\r\nCode:' + response.status)
-      //     }
-      //   })
-      //   .then((data1) => {
-      //     let pointEn = data1.trans_result[0].dst;
-      //     this.setState({ pointEn }, () => {
-      //       alert(this.state.pointEn);
-      //     })
-      //   })
-      //   .catch((err) => {
-      //     console.error(err)
-      //   });
       return (
         <TouchableOpacity style={{ marginLeft: 15, marginTop: 10 }} activeOpacity={0.8} onPress={() => this.navigator.push({ view: <PointDetails id={data.id} creatorId={this.state.creatorId} userId={this.state.userId} /> })}>
           <View style={{ flexDirection: 'row' }}>
@@ -250,7 +231,7 @@ export default class TravelMain extends BasePage {
               <NavigationBar.BackButton title='Back'
                 onPress={() => this.navigator.pop()
                 } /> :
-              <NavigationBar.BackButton title='Back'
+              <NavigationBar.BackButton title='完成'
                 onPress={() => this.navigator.push({ view: <Admin /> })
                 } />}
           rightView={
@@ -260,7 +241,7 @@ export default class TravelMain extends BasePage {
           }
         />
         <View style={styles.travelhead}>
-          <Image source={require('../public/images/image2.jpg')} style={{ width: width, height: 160 }} />
+          <Image source={{uri: this.state.coverPic}} style={{ width: width, height: 160 }} />
         </View>
         <View style={{ flex: 1, backgroundColor: '#f5f5f5', paddingTop: 20 }}>
           {this.renderContent(this.state.dataSource.cloneWithRows(

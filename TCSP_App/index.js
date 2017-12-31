@@ -8,4 +8,5 @@ import App from './App';
 import './pages/RNAsyncStorage';
 import './pages/md5';
 import './ip';
+console.disableYellowBox = true;
 AppRegistry.registerComponent('TCSP_App', () => App);

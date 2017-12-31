@@ -38,32 +38,32 @@ export default class Home extends BasePage {
           onLocation={({ nativeEvent }) => {
             this.setState({ latitude: nativeEvent.latitude });
             this.setState({ longitude: nativeEvent.longitude });
-            let uri = ip+':8080/map/getRoutepointListByPosition/latitude/' + nativeEvent.latitude + '/longitude/' + nativeEvent.longitude + '/radius/' + this.state.zoomlevel;
-            // fetch(uri, {
-            //   method: 'POST',
-            //   headers: {
-            //     'Accept': 'application/json',
-            //     'Content-Type': 'application/json',
-            //   },
-            //   credentials: 'include'
-            // })
-            //   .then((response) => response.json())
-            //   .then((res) => {
-            //     let heatpoint = [];
-            //     for (let i = 0; i < res.routepointList.length; i++) {
-            //       let one = {
-            //         latitude: res.routepointList[i].latitude,
-            //         longitude: res.routepointList[i].longitude,
-            //         score: res.routepointList[i].score
-            //       };
-            //       heatpoint.push(one);
-            //     }
-            //     heatpoint = JSON.parse(JSON.stringify(heatpoint));
-            //     this.setState({ heatpoint }, () => {
-            //       // alert(this.state.heatpoint);
-            //     })
-            //   })
-            //   .done();
+            let uri = ip + ':8080/map/getRoutepointListByPosition/latitude/' + nativeEvent.latitude + '/longitude/' + nativeEvent.longitude + '/radius/' + this.state.zoomlevel;
+            fetch(uri, {
+              method: 'POST',
+              headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+              },
+              credentials: 'include'
+            })
+              .then((response) => response.json())
+              .then((res) => {
+                let heatpoint = [];
+                for (let i = 0; i < res.routepointList.length; i++) {
+                  let one = {
+                    latitude: res.routepointList[i].latitude,
+                    longitude: res.routepointList[i].longitude,
+                    score: res.routepointList[i].score
+                  };
+                  heatpoint.push(one);
+                }
+                heatpoint = JSON.parse(JSON.stringify(heatpoint));
+                this.setState({ heatpoint }, () => {
+                  // alert(this.state.heatpoint);
+                })
+              })
+              .done();
           }}
 
           coordinate={{
