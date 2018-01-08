@@ -45,7 +45,7 @@ export default class ReleaseTraTwo extends BasePage {
     scene: TeaNavigator.SceneConfigs.PushFromRight,
   });
   //首次加载之前
-  componentDidMount() {
+  componentWillMount() {
     this.setState({ Lati: this.props.lati, Longi: this.props.longi }, () => {
       let regeouri = 'http://restapi.amap.com/v3/geocode/regeo?key=a12fe0a773225a0edbb395bce289a441&location=' + this.state.Longi + ',' + this.state.Lati;
       fetch(regeouri)
@@ -93,7 +93,7 @@ export default class ReleaseTraTwo extends BasePage {
       });
   }
   endEdit() {
-    if (this.state.pointList != []) {
+    if (this.state.pointList != []&&this.state.pointList[0].pointNum!=undefined) {
       this.navigator.push({ view: <TravelList pointList={this.state.pointList} title={this.props.title} photouri={this.props.photouri} /> })
     }
     else {

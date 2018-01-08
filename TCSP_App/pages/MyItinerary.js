@@ -23,7 +23,7 @@ export default class MyItinerary extends BasePage {
       itineraryList: []
     }
   }
-  componentDidMount() {
+  componentWillMount() {
     if (this.props.id == undefined) {
       let uri = ip+':8080/route/creatorId/' + this.props.userid;
       fetch(uri, {

@@ -26,7 +26,7 @@ export default class UserHome extends BasePage {
       userid: '',
     }
   }
-  componentDidMount() {
+  componentWillMount() {
     fetch(ip+':8080/account/getUserInfoByTokenInCookie', {
       method: 'POST',
       headers: {

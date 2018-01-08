@@ -71,6 +71,7 @@ class Login extends BasePage {
                             style={styles.textInput} placeholder='Password'
                             onChangeText={(password) => this.setState({ password })}
                             underlineColorAndroid='transparent'
+                            secureTextEntry={true}
                         />
                         <TouchableOpacity
                             style={styles.btn}

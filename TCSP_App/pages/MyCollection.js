@@ -23,7 +23,7 @@ export default class MyCollection extends NavigationPage {
       collectionList: []
     }
   }
-  componentDidMount() {
+  componentWillMount() {
     if (this.props.id == undefined) {
       fetch(ip + ':8080/account/my/favoriteRoute', {
         method: 'POST',

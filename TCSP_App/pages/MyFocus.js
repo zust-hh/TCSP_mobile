@@ -20,33 +20,12 @@ export default class MyFocus extends BasePage {
   constructor(props) {
     super(props);
     this.state = {
-      focusList: [
-        {
-          id: 1,
-          userName: '1',
-          concernNum: 111
-        },
-        {
-          id: 2,
-          userName: '2',
-          concernNum: 111
-        },
-        {
-          id: 2,
-          userName: '3',
-          concernNum: 111
-        },
-        {
-          id: 2,
-          userName: '4',
-          concernNum: 111
-        },
-      ],
+      focusList: [],
     }
   }
-  componentDidMount() {
+  componentWillMount() {
     if (this.props.id == undefined) {
-      fetch(ip+':8080/account/my/concernList', {
+      fetch(ip + ':8080/account/my/concernList', {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -61,7 +40,7 @@ export default class MyFocus extends BasePage {
         .done();
     }
     else {
-      let uri = ip+':8080/account/' + this.props.id + '/concernList';
+      let uri = ip + ':8080/account/' + this.props.id + '/concernList';
       fetch(uri, {
         method: 'POST',
         headers: {
@@ -106,7 +85,7 @@ export default class MyFocus extends BasePage {
                     </View>
                   </TouchableOpacity>
                   <TouchableOpacity style={{ zIndex: 9999, height: 70, width: 35 }} onPress={() => {
-                    let uri = ip+':8080/concern/remove/' + onefocus.id;
+                    let uri = ip + ':8080/concern/remove/' + onefocus.id;
                     fetch(uri, {
                       method: 'POST',
                       headers: {

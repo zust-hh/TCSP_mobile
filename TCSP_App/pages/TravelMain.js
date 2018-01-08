@@ -46,7 +46,7 @@ export default class TravelMain extends BasePage {
       coverPic: '',
     }
   }
-  componentDidMount() {
+  componentWillMount() {
     let uri = ip + ':8080/route/' + this.props.id + '/info';
     fetch(uri, {
       method: 'POST',

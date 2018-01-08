@@ -36,7 +36,7 @@ export default class PointDetails extends BasePage {
       funImg: [require('../public/images/fun1.png'), require('../public/images/fun2.png'), require('../public/images/fun3.png'), require('../public/images/fun4.png'), require('../public/images/fun5.png')],
     }
   }
-  componentDidMount() {
+  componentWillMount() {
     let uri = ip + ':8080/routepoint/' + this.props.id;
     fetch(uri, {
       method: 'POST',
